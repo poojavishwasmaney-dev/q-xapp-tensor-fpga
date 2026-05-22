@@ -1,0 +1,1083 @@
+const pptxgen = require("pptxgenjs");
+
+const pres = new pptxgen();
+pres.layout = 'LAYOUT_16x9';
+pres.title = 'FPGA-Accelerated Oracle-Diffusion Scheduling for 6G URLLC';
+
+// ─── PALETTE ───
+const C = {
+  navy:    "0B1F3A",
+  teal:    "0A7EA4",
+  tealLt:  "E8F4F8",
+  tealMid: "1A9CC4",
+  white:   "FFFFFF",
+  offWht:  "F7F9FC",
+  slate:   "4A6274",
+  slateXlt:"EFF3F6",
+  gold:    "E8A020",
+  goldLt:  "FEF3E2",
+  green:   "1A7A4A",
+  greenLt: "E6F4EC",
+  red:     "B83232",
+  redLt:   "FDEAEA",
+  amber:   "B86A00",
+  amberLt: "FFF0D6",
+  text:    "1A2A3A",
+  muted:   "5A6E7E",
+  border:  "CBD8E4",
+  codeBg:  "0D1B2A",
+  codeGr:  "4EC9B0",
+};
+
+const makeShadow = () => ({ type:"outer", blur:8, offset:3, angle:135, color:"000000", opacity:0.10 });
+const makeCardShadow = () => ({ type:"outer", blur:5, offset:2, angle:135, color:"000000", opacity:0.07 });
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 1 — TITLE
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.navy };
+
+  // Left accent bar
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:0.25, h:5.625, fill:{color:C.teal}, line:{color:C.teal} });
+
+  // Teal top band
+  s.addShape(pres.shapes.RECTANGLE, { x:0.25, y:0, w:9.75, h:0.06, fill:{color:C.teal}, line:{color:C.teal} });
+
+  // "MSc Project Proposal" badge
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x:0.55, y:0.5, w:2.4, h:0.38, fill:{color:C.tealMid}, line:{color:C.tealMid}, rectRadius:0.06 });
+  s.addText("MSc PROJECT PROPOSAL", { x:0.55, y:0.5, w:2.4, h:0.38, fontSize:9, color:C.white, bold:true, align:"center", valign:"middle", charSpacing:2 });
+
+  // Main title
+  s.addText("FPGA-Accelerated", { x:0.55, y:1.1, w:8.8, h:0.75, fontSize:42, color:C.white, bold:true, fontFace:"Calibri", margin:0 });
+  s.addText("Oracle-Diffusion User Scheduling", { x:0.55, y:1.82, w:8.8, h:0.75, fontSize:36, color:C.tealMid, bold:true, fontFace:"Calibri", margin:0 });
+  s.addText("for 6G URLLC", { x:0.55, y:2.54, w:8.8, h:0.6, fontSize:36, color:C.white, bold:false, fontFace:"Calibri", margin:0 });
+
+  // Divider
+  s.addShape(pres.shapes.LINE, { x:0.55, y:3.28, w:8.8, h:0, line:{color:C.teal, width:1.5} });
+
+  // Sub-labels
+  s.addText([
+    { text:"Platform:  ", options:{color:C.muted+"AA", bold:false} },
+    { text:"AMD Kria KV260 FPGA + Qiskit (Python)", options:{color:C.white, bold:true} },
+  ], { x:0.55, y:3.42, w:8.8, h:0.35, fontSize:13, fontFace:"Calibri", margin:0 });
+
+  s.addText([
+    { text:"Algorithm:  ", options:{color:C.muted+"AA", bold:false} },
+    { text:"Grover-Inspired Oracle-Diffusion Pattern (Classical Simulation)", options:{color:C.white, bold:true} },
+  ], { x:0.55, y:3.78, w:8.8, h:0.35, fontSize:13, fontFace:"Calibri", margin:0 });
+
+  s.addText([
+    { text:"Domain:  ", options:{color:C.muted+"AA", bold:false} },
+    { text:"5G/6G Ultra-Reliable Low-Latency Communication (URLLC)", options:{color:C.white, bold:true} },
+  ], { x:0.55, y:4.14, w:8.8, h:0.35, fontSize:13, fontFace:"Calibri", margin:0 });
+
+  s.addText("Candidate: [Your Name]  |  Supervisor: [Supervisor Name]  |  [Date]", {
+    x:0.55, y:5.1, w:8.8, h:0.3, fontSize:10, color:C.muted+"BB", align:"left", margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 2 — THE CRITICAL CLARIFICATION
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("WHAT THIS PROJECT IS — AND IS NOT", { x:0.4, y:0, w:9.2, h:0.55, fontSize:16, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // Left: IS NOT
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.75, w:4.3, h:0.4, fill:{color:C.redLt}, line:{color:C.red} });
+  s.addText("✗  What this project is NOT", { x:0.3, y:0.75, w:4.3, h:0.4, fontSize:12, color:C.red, bold:true, valign:"middle", margin:8 });
+
+  const notItems = [
+    "Running on real quantum hardware (IBM/Google qubits)",
+    "Achieving O(√N) quantum speedup — that only exists on real quantum hardware",
+    "Quantum computing in any physical sense",
+    "Qiskit on CPU is a classical matrix simulation — NOT quantum",
+  ];
+  notItems.forEach((txt, i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:1.22+i*0.62, w:4.3, h:0.52, fill:{color:C.redLt}, line:{color:C.border}, shadow:makeCardShadow() });
+    s.addText(txt, { x:0.42, y:1.22+i*0.62, w:4.1, h:0.52, fontSize:11, color:C.red, valign:"middle", margin:0 });
+  });
+
+  // Right: IS
+  s.addShape(pres.shapes.RECTANGLE, { x:5.1, y:0.75, w:4.6, h:0.4, fill:{color:C.greenLt}, line:{color:C.green} });
+  s.addText("✓  What this project IS", { x:5.1, y:0.75, w:4.6, h:0.4, fontSize:12, color:C.green, bold:true, valign:"middle", margin:8 });
+
+  const isItems = [
+    ["FPGA hardware accelerator", "Custom HLS kernel on Kria KV260"],
+    ["Classical simulation", "Of the oracle-diffusion mathematical pattern"],
+    ["Wall-clock speedup", "Through FPGA parallelism vs CPU (Qiskit)"],
+    ["Novel contribution", "First FPGA implementation for 6G URLLC scheduling"],
+  ];
+  isItems.forEach(([title, sub], i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x:5.1, y:1.22+i*0.62, w:4.6, h:0.52, fill:{color:C.greenLt}, line:{color:C.border}, shadow:makeCardShadow() });
+    s.addText(title, { x:5.22, y:1.22+i*0.62+0.03, w:4.3, h:0.24, fontSize:11, color:C.green, bold:true, margin:0 });
+    s.addText(sub, { x:5.22, y:1.22+i*0.62+0.26, w:4.3, h:0.22, fontSize:10, color:C.muted, margin:0 });
+  });
+
+  // Bottom thesis statement
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:4.78, w:9.4, h:0.65, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText([
+    {text:"Thesis statement:  ", options:{bold:true, color:C.teal}},
+    {text:"We implement an FPGA accelerator using the oracle-diffusion pattern of Grover's algorithm to schedule 6G URLLC users in <500 μs, and measure how close to optimal it gets.", options:{color:C.text}},
+  ], { x:0.42, y:4.78, w:9.2, h:0.65, fontSize:11.5, valign:"middle", margin:0 });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 3 — PROBLEM STATEMENT
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("THE SCHEDULING PROBLEM", { x:0.4, y:0, w:9.2, h:0.55, fontSize:16, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // Problem description box
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.7, w:9.4, h:1.0, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText([
+    {text:"Core Problem:  ", options:{bold:true, color:C.navy}},
+    {text:"A 6G base station must select which N users to serve across K resource blocks each scheduling interval, maximising total utility while satisfying fairness and QoS constraints — all within 500 μs.", options:{color:C.text}},
+  ], { x:0.5, y:0.7, w:9.1, h:1.0, fontSize:12.5, valign:"middle", margin:0 });
+
+  // Why hard label
+  s.addText("Why existing methods fail at scale (N=32 users):", { x:0.3, y:1.85, w:9.4, h:0.3, fontSize:12, color:C.navy, bold:true, margin:0 });
+
+  // Comparison table
+  const rows = [
+    [{text:"Method", options:{bold:true, color:C.white, fill:{color:C.navy}}}, {text:"Latency (N=32)", options:{bold:true, color:C.white, fill:{color:C.navy}}}, {text:"Why it fails", options:{bold:true, color:C.white, fill:{color:C.navy}}}, {text:"Status", options:{bold:true, color:C.white, fill:{color:C.navy}}}],
+    ["Exhaustive search", ">1 hour", "Checks all 2^32 = 4.3B combinations", {text:"✗ Impossible", options:{color:C.red, bold:true}}],
+    ["Greedy algorithm", "0.2 ms ✓", "15–30% suboptimal — misses better schedules", {text:"△ Partial", options:{color:C.amber, bold:true}}],
+    ["Deep RL (DQN inference)", "<1 ms on GPU", "Needs GPU hardware; hard to deploy at edge", {text:"△ Partial", options:{color:C.amber, bold:true}}],
+    ["Qiskit on CPU", "10–100 ms", "Python simulation overhead violates URLLC", {text:"✗ Too slow", options:{color:C.red, bold:true}}],
+    [{text:"FPGA Oracle-Diffusion (proposed)", options:{bold:true, color:C.teal}}, {text:"Target <500 μs", options:{bold:true, color:C.teal}}, {text:"Hardware parallelism, fixed-point arithmetic", options:{bold:true, color:C.teal}}, {text:"✓ Target", options:{color:C.green, bold:true}}],
+  ];
+  s.addTable(rows, {
+    x:0.3, y:2.2, w:9.4, h:2.65,
+    border:{pt:0.5, color:C.border},
+    fill:{color:C.white},
+    colW:[2.8, 1.9, 3.2, 1.5],
+    fontFace:"Calibri", fontSize:11,
+    rowH:0.44,
+  });
+
+  // Note box
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:5.0, w:9.4, h:0.42, fill:{color:C.goldLt}, line:{color:C.gold} });
+  s.addText("Note: DQN latency above is inference-only. Source: Hu et al. IEEE TWC 2023. URLLC target: 3GPP TR 38.824 / ITU-R M.2160.", {
+    x:0.42, y:5.0, w:9.2, h:0.42, fontSize:9.5, color:C.amber, valign:"middle", margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 4 — 6G URLLC REQUIREMENTS
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("6G URLLC REQUIREMENTS & USE CASES", { x:0.4, y:0, w:9.2, h:0.55, fontSize:16, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // Stats row
+  const stats = [
+    ["< 0.1 ms", "Air interface latency", C.teal],
+    ["< 500 μs", "User-plane processing\n← OUR TARGET", C.green],
+    ["99.9999%", "Reliability\n(10⁻⁶ error rate)", C.navy],
+    ["< 200 μs", "Scheduling decision\n← STRETCH GOAL", C.gold],
+  ];
+  stats.forEach(([val, lbl, col], i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x:0.3+i*2.38, y:0.72, w:2.2, h:1.2, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+    s.addShape(pres.shapes.RECTANGLE, { x:0.3+i*2.38, y:0.72, w:2.2, h:0.06, fill:{color:col}, line:{color:col} });
+    s.addText(val, { x:0.3+i*2.38, y:0.78, w:2.2, h:0.56, fontSize:26, color:col, bold:true, align:"center", valign:"middle", margin:0 });
+    s.addText(lbl, { x:0.3+i*2.38, y:1.34, w:2.2, h:0.55, fontSize:9.5, color:C.muted, align:"center", valign:"top", margin:4 });
+  });
+
+  s.addText("Sources: 3GPP TR 38.824 (5G URLLC) + ITU-R M.2160 (IMT-2030 / 6G)", {
+    x:0.3, y:1.98, w:9.4, h:0.25, fontSize:9, color:C.muted, margin:0
+  });
+
+  // Use cases
+  s.addText("Applications that require this performance:", { x:0.3, y:2.32, w:9.4, h:0.3, fontSize:12, color:C.navy, bold:true, margin:0 });
+
+  const cases = [
+    ["🚗", "Autonomous vehicles", "Real-time coordination, collision avoidance"],
+    ["🏭", "Industrial robots", "Industry 4.0 — sub-ms control loops"],
+    ["🔬", "Remote surgery", "Haptic feedback, zero tolerance for delay"],
+    ["🥽", "Tactile internet", "Touch and feel transmitted over network"],
+    ["📡", "mmWave streaming", "High-density AR/VR at the edge"],
+    ["⚡", "Smart grid control", "Power network real-time switching"],
+  ];
+  cases.forEach(([icon, title, desc], i) => {
+    const col = i < 3 ? 0 : 1;
+    const row = i % 3;
+    const bx = 0.3 + col*4.85;
+    const by = 2.68 + row*0.72;
+    s.addShape(pres.shapes.RECTANGLE, { x:bx, y:by, w:4.65, h:0.62, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+    s.addText(icon + "  " + title, { x:bx+0.12, y:by+0.02, w:4.4, h:0.3, fontSize:12, color:C.navy, bold:true, margin:0 });
+    s.addText(desc, { x:bx+0.12, y:by+0.3, w:4.4, h:0.28, fontSize:10, color:C.muted, margin:0 });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 5 — PROPOSED SOLUTION OVERVIEW
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("PROPOSED SOLUTION: ORACLE-DIFFUSION FPGA ACCELERATOR", { x:0.4, y:0, w:9.2, h:0.55, fontSize:15, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // 3-phase pipeline
+  const phases = [
+    { num:"1", title:"Pre-processing (ARM PS)", color:C.slate, items:["Read channel state (SINR per user/PRB)", "Compute FBL-adjusted rates", "Set oracle threshold via greedy", "Transfer data to FPGA via AXI-DMA"] },
+    { num:"2", title:"Grover Kernel (FPGA PL)", color:C.teal, items:["Init uniform amplitudes α = 1/√(2^N)", "Oracle: flip phase of good states", "Diffusion: reflect around mean", "Repeat m iterations → ArgMax"] },
+    { num:"3", title:"Post-processing (ARM PS)", color:C.navy, items:["Decode best schedule bitmask", "Validate QoS constraints", "Issue scheduling decision", "Send via E2 interface to O-RAN DU"] },
+  ];
+
+  phases.forEach(({num, title, color, items}, i) => {
+    const bx = 0.3 + i*3.2;
+    s.addShape(pres.shapes.RECTANGLE, { x:bx, y:0.65, w:3.0, h:4.55, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeShadow() });
+    s.addShape(pres.shapes.RECTANGLE, { x:bx, y:0.65, w:3.0, h:0.5, fill:{color:color}, line:{color:color} });
+    s.addText(`Phase ${num}`, { x:bx, y:0.65, w:3.0, h:0.22, fontSize:9.5, color:C.white, bold:true, align:"center", valign:"middle", margin:0 });
+    s.addText(title, { x:bx, y:0.87, w:3.0, h:0.25, fontSize:10, color:C.white, align:"center", valign:"middle", margin:0 });
+    items.forEach((it, j) => {
+      s.addShape(pres.shapes.RECTANGLE, { x:bx+0.15, y:1.28+j*0.8, w:2.7, h:0.68, fill:{color:C.white}, line:{color:C.border} });
+      s.addText(it, { x:bx+0.22, y:1.28+j*0.8, w:2.56, h:0.68, fontSize:10.5, color:C.text, valign:"middle", margin:0 });
+    });
+    // Arrow between phases
+    if (i < 2) {
+      s.addShape(pres.shapes.LINE, { x:3.3+i*3.2, y:2.92, w:0.2, h:0, line:{color:C.teal, width:2} });
+      s.addText("▶", { x:3.3+i*3.2+0.18, y:2.78, w:0.22, h:0.28, fontSize:14, color:C.teal, margin:0 });
+    }
+  });
+
+  // Bottom key claim
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:5.25, w:9.4, h:0.22, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("Key claim: FPGA parallelism achieves <500 μs end-to-end — not quantum speedup, but hardware acceleration", {
+    x:0.3, y:5.25, w:9.4, h:0.22, fontSize:10, color:C.tealMid, align:"center", valign:"middle", margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 6 — MATHEMATICAL FOUNDATION Eq 1 & 2
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("EQUATIONS 1 & 2 — RATE CALCULATION (SOLVED IN QISKIT & FPGA)", { x:0.4, y:0, w:9.2, h:0.55, fontSize:14, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // Badge
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.65, w:2.1, h:0.3, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("SOLVED IN: Qiskit (Python) + FPGA pre-processing (ARM PS)", { x:0.3, y:0.65, w:9.4, h:0.3, fontSize:9.5, color:C.teal, bold:true, valign:"middle", margin:6 });
+
+  // EQ1
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:1.05, w:4.55, h:2.7, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Eq. 1 — Achievable Rate (Finite Blocklength)", { x:0.4, y:1.08, w:4.35, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:1.43, w:4.3, h:0.62, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("R_ia = B_a [ log₂(1 + SINR_ia) − ζ_ia ]", { x:0.42, y:1.43, w:4.3, h:0.62, fontSize:13, color:C.codeGr, bold:true, align:"center", valign:"middle", fontFace:"Courier New", margin:0 });
+  const eq1vars = [["B_a","Bandwidth of PRB a (240 kHz)"],["SINR_ia","P·|h_ia|² / σ² (signal to noise ratio)"],["ζ_ia","Finite blocklength penalty (Eq. 2)"]];
+  eq1vars.forEach(([v, d], i) => {
+    s.addText(v, { x:0.45, y:2.14+i*0.5, w:1.0, h:0.4, fontSize:10.5, color:C.teal, bold:true, fontFace:"Courier New", margin:0 });
+    s.addText(d, { x:1.52, y:2.14+i*0.5, w:3.2, h:0.4, fontSize:10, color:C.text, valign:"middle", margin:0 });
+  });
+
+  // EQ2
+  s.addShape(pres.shapes.RECTANGLE, { x:5.15, y:1.05, w:4.55, h:2.7, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Eq. 2 — Finite Blocklength Penalty", { x:5.25, y:1.08, w:4.35, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:5.27, y:1.43, w:4.3, h:0.62, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("ζ_ia = log₂(e) · Q⁻¹(ε) · √(η_ia / l_ia)", { x:5.27, y:1.43, w:4.3, h:0.62, fontSize:12, color:C.codeGr, bold:true, align:"center", valign:"middle", fontFace:"Courier New", margin:0 });
+  const eq2vars = [["ε","Error probability = 10⁻⁵ for URLLC"],["Q⁻¹","Inverse Q-function"],["η_ia","1 − [σ²/(σ²+P|h|²)]² (dispersion)"],["l_ia","Blocklength = 32 bytes"]];
+  eq2vars.forEach(([v, d], i) => {
+    s.addText(v, { x:5.3, y:2.14+i*0.4, w:0.85, h:0.35, fontSize:10.5, color:C.teal, bold:true, fontFace:"Courier New", margin:0 });
+    s.addText(d, { x:6.22, y:2.14+i*0.4, w:3.35, h:0.35, fontSize:10, color:C.text, valign:"middle", margin:0 });
+  });
+
+  // Source
+  s.addText("Source: Polyanskiy, Poor & Verdú, IEEE Trans. Inf. Theory 2010 (finite blocklength theory)", {
+    x:0.3, y:3.82, w:9.4, h:0.26, fontSize:9, color:C.muted, margin:0
+  });
+
+  // Python code
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:4.14, w:9.4, h:1.35, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("# Python (Qiskit pre-processing) — Phase 1 ARM calculation", { x:0.44, y:4.14, w:9.1, h:0.28, fontSize:9, color:"6A9955", fontFace:"Courier New", margin:0 });
+  s.addText([
+    {text:"def ", options:{color:"C586C0"}},{text:"calculate_rate", options:{color:"DCDCAA"}},{text:"(B, P, h, sigma2, eps, l):\n", options:{color:C.white}},
+    {text:"    sinr = P * abs(h)**2 / sigma2\n", options:{color:C.white}},
+    {text:"    zeta = log2(e) * qinv(eps) * sqrt((1-(sigma2/(sigma2+P*abs(h)**2))**2)/l)\n", options:{color:C.white}},
+    {text:"    return ", options:{color:"C586C0"}},{text:"B * (log2(1 + sinr) - zeta)   ", options:{color:C.white}},{text:"# Eq 1 + 2", options:{color:"6A9955"}},
+  ], { x:0.44, y:4.42, w:9.1, h:0.97, fontSize:9.5, fontFace:"Courier New", margin:0 });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 7 — EQUATIONS 3 & 4 UTILITY + CONSTRAINTS
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("EQUATIONS 3 & 4 — UTILITY FUNCTION & CONSTRAINTS (SOLVED IN QISKIT)", { x:0.4, y:0, w:9.2, h:0.55, fontSize:14, color:C.white, bold:true, valign:"middle", margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.65, w:9.4, h:0.3, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("SOLVED IN: Qiskit (Python) — defines what schedule is 'good' for the oracle", { x:0.3, y:0.65, w:9.4, h:0.3, fontSize:9.5, color:C.teal, bold:true, valign:"middle", margin:6 });
+
+  // Utility eq
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:1.05, w:4.55, h:2.25, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Eq. 3 — Proportional Fairness Utility", { x:0.4, y:1.08, w:4.35, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:1.42, w:4.3, h:0.55, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("U(S) = Σ_{i∈S}  w_i · log₂(1 + SINR_i)", { x:0.42, y:1.42, w:4.3, h:0.55, fontSize:12, color:C.codeGr, bold:true, align:"center", valign:"middle", fontFace:"Courier New", margin:0 });
+  s.addText([
+    {text:"w_i", options:{color:C.teal, bold:true}},{text:" = r_i(t) / R_i(t)   — proportional fairness weight\n", options:{color:C.text}},
+    {text:"r_i(t)", options:{color:C.teal, bold:true}},{text:" = instantaneous rate;   ", options:{color:C.text}},
+    {text:"R_i(t)", options:{color:C.teal, bold:true}},{text:" = moving average\n", options:{color:C.text}},
+    {text:"⚠ Requires T≥500 TTI simulation — not single-shot", options:{color:C.amber, bold:true}},
+  ], { x:0.42, y:2.02, w:4.3, h:1.2, fontSize:10, fontFace:"Calibri", margin:4 });
+
+  // Constraints
+  s.addShape(pres.shapes.RECTANGLE, { x:5.15, y:1.05, w:4.55, h:2.25, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Eq. 4 — Scheduling Constraints", { x:5.25, y:1.08, w:4.35, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  const constraints = [
+    ["(4a)", "Σ x_ia = 1  ∀a", "One user per PRB"],
+    ["(4b)", "Σ x_ia ≤ C_i  ∀i", "Fairness cap per user"],
+    ["(4c)", "Σ R_ia·x_ia ≥ R_min  ∀i", "Min QoS guaranteed"],
+  ];
+  constraints.forEach(([label, eq, desc], i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x:5.27, y:1.42+i*0.6, w:4.3, h:0.52, fill:{color:C.white}, line:{color:C.border} });
+    s.addText(label, { x:5.32, y:1.42+i*0.6, w:0.5, h:0.52, fontSize:10, color:C.muted, valign:"middle", margin:0 });
+    s.addText(eq, { x:5.85, y:1.42+i*0.6, w:2.1, h:0.52, fontSize:10, color:C.teal, bold:true, fontFace:"Courier New", valign:"middle", margin:0 });
+    s.addText(desc, { x:8.0, y:1.42+i*0.6, w:1.48, h:0.52, fontSize:9.5, color:C.text, valign:"middle", margin:0 });
+  });
+
+  // Python code
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.38, w:9.4, h:2.08, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("# Qiskit Python — utility + oracle check (decides which schedules are 'good')", { x:0.44, y:3.38, w:9.1, h:0.28, fontSize:9, color:"6A9955", fontFace:"Courier New", margin:0 });
+  s.addText([
+    {text:"def ", options:{color:"C586C0"}},{text:"utility", options:{color:"DCDCAA"}},{text:"(self, bitstring):  ", options:{color:C.white}},{text:"# Eq. 3\n", options:{color:"6A9955"}},
+    {text:"    selected = [i ", options:{color:C.white}},{text:"for ", options:{color:"C586C0"}},{text:"i,b ", options:{color:C.white}},{text:"in ", options:{color:"C586C0"}},{text:"enumerate(bitstring) ", options:{color:C.white}},{text:"if ", options:{color:"C586C0"}},{text:"b=='1']\n", options:{color:C.white}},
+    {text:"    if ", options:{color:"C586C0"}},{text:"len(selected) != self.K: ", options:{color:C.white}},{text:"return ", options:{color:"C586C0"}},{text:"0  ", options:{color:C.white}},{text:"# constraint (4a)\n", options:{color:"6A9955"}},
+    {text:"    return ", options:{color:"C586C0"}},{text:"sum(self.w[i]*log2(1+self.sinr[i]) ", options:{color:C.white}},{text:"for ", options:{color:"C586C0"}},{text:"i ", options:{color:C.white}},{text:"in ", options:{color:"C586C0"}},{text:"selected)\n", options:{color:C.white}},
+    {text:"\ndef ", options:{color:"C586C0"}},{text:"is_good_state", options:{color:"DCDCAA"}},{text:"(self, bitstring):  ", options:{color:C.white}},{text:"# Oracle condition — NO full enumeration\n", options:{color:"6A9955"}},
+    {text:"    return ", options:{color:"C586C0"}},{text:"self.utility(bitstring) >= self.greedy_threshold  ", options:{color:C.white}},{text:"# threshold set a priori", options:{color:"6A9955"}},
+  ], { x:0.44, y:3.66, w:9.1, h:1.72, fontSize:9.5, fontFace:"Courier New", margin:0 });
+
+  s.addText("Source: Kelly, Maulloo & Tan, J. Operational Research 1998 (proportional fairness)", { x:0.3, y:5.5, w:9.4, h:0.22, fontSize:9, color:C.muted, margin:0 });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 8 — QUANTUM STATE REPRESENTATION Eq 5
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("EQUATION 5 — AMPLITUDE STATE ENCODING (SOLVED IN QISKIT & FPGA)", { x:0.4, y:0, w:9.2, h:0.55, fontSize:14, color:C.white, bold:true, valign:"middle", margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.65, w:9.4, h:0.3, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("SOLVED IN: Qiskit (statevector simulation) AND FPGA (amplitude array in BRAM)", { x:0.3, y:0.65, w:9.4, h:0.3, fontSize:9.5, color:C.teal, bold:true, valign:"middle", margin:6 });
+
+  // Left: concept
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:1.05, w:4.6, h:3.6, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Eq. 5 — Uniform Superposition", { x:0.4, y:1.08, w:4.4, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:1.42, w:4.35, h:0.55, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("|Ψ⟩ = (1/√2ᴺ) · Σ |x⟩  for x = 0..2ᴺ−1", { x:0.42, y:1.42, w:4.35, h:0.55, fontSize:11.5, color:C.codeGr, bold:true, align:"center", valign:"middle", fontFace:"Courier New", margin:0 });
+  s.addText("Each schedule = an N-bit binary string:", { x:0.42, y:2.06, w:4.35, h:0.28, fontSize:10.5, color:C.navy, bold:true, margin:0 });
+  s.addText("N = 4 users, K = 2 to schedule\nSchedule {user1, user3} → |1010⟩\nSchedule {user2, user4} → |0101⟩", {
+    x:0.42, y:2.34, w:4.35, h:0.7, fontSize:10, color:C.text, fontFace:"Courier New", margin:4
+  });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:3.12, w:4.35, h:1.35, fill:{color:C.goldLt}, line:{color:C.gold} });
+  s.addText("⚠  IMPORTANT DISTINCTION", { x:0.52, y:3.12, w:4.15, h:0.28, fontSize:10, color:C.amber, bold:true, margin:0 });
+  s.addText("In Qiskit: this is a complex number vector in RAM — a pure mathematical simulation of quantum amplitudes.\n\nOn FPGA: this is a fixed-point array in BRAM. No qubits. No superposition. Just numbers.", {
+    x:0.52, y:3.4, w:4.15, h:1.0, fontSize:9.5, color:C.amber, margin:0
+  });
+
+  // Right: FPGA vs Qiskit encoding comparison
+  s.addShape(pres.shapes.RECTANGLE, { x:5.15, y:1.05, w:4.55, h:3.6, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("How each platform stores amplitudes:", { x:5.25, y:1.08, w:4.35, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+
+  s.addShape(pres.shapes.RECTANGLE, { x:5.27, y:1.42, w:4.3, h:1.5, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("# Qiskit (statevector, 64-bit complex floats)", { x:5.35, y:1.42, w:4.15, h:0.24, fontSize:8.5, color:"6A9955", fontFace:"Courier New", margin:0 });
+  s.addText([
+    {text:"qc = QuantumCircuit(N)\n", options:{color:C.white}},
+    {text:"for ", options:{color:"C586C0"}},{text:"i ", options:{color:C.white}},{text:"in ", options:{color:"C586C0"}},{text:"range(N): qc.h(i)  ", options:{color:C.white}},{text:"# Hadamard\n", options:{color:"6A9955"}},
+    {text:"# result: sv[0..2^N-1] complex amplitudes", options:{color:"6A9955"}},
+  ], { x:5.35, y:1.66, w:4.15, h:1.22, fontSize:9, fontFace:"Courier New", margin:0 });
+
+  s.addShape(pres.shapes.RECTANGLE, { x:5.27, y:3.02, w:4.3, h:1.4, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("// FPGA HLS (ap_fixed<16,8> — 16-bit fixed point)", { x:5.35, y:3.02, w:4.15, h:0.24, fontSize:8.5, color:"6A9955", fontFace:"Courier New", margin:0 });
+  s.addText([
+    {text:"amplitude_t amps[N_STATES];  // BRAM array\n", options:{color:C.white}},
+    {text:"for(int i=0; i<N_STATES; i++)\n", options:{color:C.white}},
+    {text:"    amps[i] = inv_sqrt_N;  // 1/√(2^N)\n", options:{color:C.white}},
+    {text:"// Same maths, 16-bit fixed point, no qubits", options:{color:"6A9955"}},
+  ], { x:5.35, y:3.26, w:4.15, h:1.12, fontSize:9, fontFace:"Courier New", margin:0 });
+
+  s.addText("Scope: N ≤ 16 (65,536 states × 2 bytes = 128 KB — fits in KV260 BRAM)", {
+    x:0.3, y:4.74, w:9.4, h:0.3, fontSize:10, color:C.green, bold:true, margin:0
+  });
+  s.addText("N = 32 would require 4.3B × 2 bytes = 8 GB — physically impossible on KV260 (5.1 MB BRAM).", {
+    x:0.3, y:5.05, w:9.4, h:0.26, fontSize:9.5, color:C.red, margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 9 — ORACLE Eq 6
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("EQUATION 6 — THE ORACLE: MARKING GOOD SCHEDULES", { x:0.4, y:0, w:9.2, h:0.55, fontSize:15, color:C.white, bold:true, valign:"middle", margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.65, w:9.4, h:0.3, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("SOLVED IN: Both — Qiskit builds oracle automatically; FPGA applies sign flip per pre-computed good_state[] array", { x:0.3, y:0.65, w:9.4, h:0.3, fontSize:9.5, color:C.teal, bold:true, valign:"middle", margin:6 });
+
+  // Equation
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:1.05, w:4.6, h:2.55, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Eq. 6 — Phase Oracle", { x:0.4, y:1.08, w:4.4, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:1.42, w:4.35, h:0.52, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("O|x⟩ = (−1)^f(x) · |x⟩", { x:0.42, y:1.42, w:4.35, h:0.52, fontSize:16, color:C.codeGr, bold:true, align:"center", valign:"middle", fontFace:"Courier New", margin:0 });
+  s.addText([
+    {text:"f(x) = 1 ", options:{bold:true, color:C.teal}},{text:"if schedule x is GOOD, else 0\n\n", options:{color:C.text}},
+    {text:"Good schedule conditions:\n", options:{bold:true, color:C.navy}},
+    {text:"  • Exactly K users selected (cardinality)\n", options:{color:C.text}},
+    {text:"  • U(x) ≥ threshold (greedy upper bound)\n", options:{color:C.text}},
+    {text:"  • All SINR_i ≥ γ_min (QoS floor)", options:{color:C.text}},
+  ], { x:0.42, y:2.02, w:4.35, h:1.5, fontSize:10.5, margin:4 });
+
+  // Critical note
+  s.addShape(pres.shapes.RECTANGLE, { x:5.15, y:1.05, w:4.55, h:2.55, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("FPGA Oracle implementation", { x:5.25, y:1.08, w:4.35, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:5.27, y:1.42, w:4.3, h:1.62, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText([
+    {text:"// good_state[] pre-computed by ARM PS (greedy)\n", options:{color:"6A9955"}},
+    {text:"void ", options:{color:"C586C0"}},{text:"oracle_step(amplitude_t amps[], bool good[]) {\n", options:{color:C.white}},
+    {text:"  #pragma HLS PIPELINE\n", options:{color:"6A9955"}},
+    {text:"  for(int i=0; i<N_STATES; i++) {\n", options:{color:C.white}},
+    {text:"    #pragma HLS UNROLL factor=16\n", options:{color:"6A9955"}},
+    {text:"    amps[i] = good[i] ? -amps[i] : amps[i];\n", options:{color:C.white}},
+    {text:"  }\n", options:{color:C.white}},
+    {text:"}", options:{color:C.white}},
+  ], { x:5.3, y:1.42, w:4.25, h:1.62, fontSize:8.5, fontFace:"Courier New", margin:4 });
+  s.addShape(pres.shapes.RECTANGLE, { x:5.27, y:3.1, w:4.3, h:0.42, fill:{color:C.goldLt}, line:{color:C.gold} });
+  s.addText("Threshold set by greedy (O(N log N)) — not O(2^N) enumeration", { x:5.3, y:3.1, w:4.2, h:0.42, fontSize:9.5, color:C.amber, bold:true, valign:"middle", margin:4 });
+
+  // N=3 example
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.68, w:9.4, h:1.68, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Example — N=3 users, K=2 to select:", { x:0.42, y:3.71, w:9.1, h:0.28, fontSize:11, color:C.navy, bold:true, margin:0 });
+  const exRows = [
+    [{text:"Schedule", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Utility", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"K=2?", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Oracle action", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Result", options:{bold:true,color:C.white,fill:{color:C.navy}}}],
+    ["|110⟩","10.5","✓ Yes",{text:"Phase flip × −1", options:{color:C.green}},{text:"Amplitude −α", options:{color:C.green}}],
+    ["|101⟩","8.2","✓ Yes",{text:"Phase flip × −1", options:{color:C.green}},{text:"Amplitude −α", options:{color:C.green}}],
+    ["|011⟩","3.1 (below threshold)","✓ Yes",{text:"No change", options:{color:C.red}},{text:"Amplitude +α", options:{color:C.red}}],
+    ["|100⟩","—","✗ Only 1 user",{text:"No change", options:{color:C.red}},{text:"Amplitude +α", options:{color:C.red}}],
+  ];
+  s.addTable(exRows, {
+    x:0.3, y:4.0, w:9.4, h:1.3,
+    border:{pt:0.5, color:C.border},
+    fill:{color:C.white},
+    colW:[1.5, 2.5, 1.4, 2.2, 1.8],
+    fontSize:10, fontFace:"Calibri", rowH:0.26,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 10 — DIFFUSION OPERATOR Eq 7
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("EQUATION 7 — DIFFUSION OPERATOR: AMPLIFYING GOOD SCHEDULES", { x:0.4, y:0, w:9.2, h:0.55, fontSize:14, color:C.white, bold:true, valign:"middle", margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.65, w:9.4, h:0.3, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("SOLVED IN: Qiskit (automatic) + FPGA HLS kernel (explicit parallel implementation)", { x:0.3, y:0.65, w:9.4, h:0.3, fontSize:9.5, color:C.teal, bold:true, valign:"middle", margin:6 });
+
+  // Equation left
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:1.05, w:4.6, h:2.12, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Eq. 7 — Grover Diffusion Operator", { x:0.4, y:1.08, w:4.4, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:1.42, w:4.35, h:0.5, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("D = 2|Ψ⟩⟨Ψ| − I", { x:0.42, y:1.42, w:4.35, h:0.5, fontSize:18, color:C.codeGr, bold:true, align:"center", valign:"middle", fontFace:"Courier New", margin:0 });
+  s.addText([
+    {text:"Effect:\n", options:{bold:true, color:C.navy}},
+    {text:"  • Reflects amplitude vector around the mean\n", options:{color:C.text}},
+    {text:"  • Marked states: amplitude increases\n", options:{color:C.green}},
+    {text:"  • Unmarked states: amplitude decreases\n", options:{color:C.red}},
+    {text:"  • One iteration: |Ψ_{k+1}⟩ = D · O · |Ψ_k⟩", options:{color:C.text}},
+  ], { x:0.42, y:2.0, w:4.35, h:1.1, fontSize:10.5, margin:4 });
+
+  // HLS code right
+  s.addShape(pres.shapes.RECTANGLE, { x:5.15, y:1.05, w:4.55, h:2.12, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("FPGA HLS diffusion kernel (grover_kernel.cpp):", { x:5.25, y:1.08, w:4.35, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:5.27, y:1.42, w:4.3, h:1.72, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText([
+    {text:"void ", options:{color:"C586C0"}},{text:"diffusion_step(amplitude_t amps[N_STATES]) {\n", options:{color:C.white}},
+    {text:"  #pragma HLS PIPELINE\n", options:{color:"6A9955"}},
+    {text:"  amplitude_t sum=0;\n", options:{color:C.white}},
+    {text:"  for(int i=0;i<N_STATES;i++) sum+=amps[i]; // tree\n", options:{color:C.white}},
+    {text:"  amplitude_t mean = sum / N_STATES;\n", options:{color:C.white}},
+    {text:"  for(int i=0;i<N_STATES;i++) {\n", options:{color:C.white}},
+    {text:"    #pragma HLS UNROLL factor=16\n", options:{color:"6A9955"}},
+    {text:"    amps[i] = (2*mean) - amps[i];\n", options:{color:C.white}},
+    {text:"  }\n}\n", options:{color:C.white}},
+    {text:"// 8-stage parallel reduction tree for sum", options:{color:"6A9955"}},
+  ], { x:5.3, y:1.42, w:4.25, h:1.72, fontSize:8.5, fontFace:"Courier New", margin:4 });
+
+  // Iteration count
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.25, w:9.4, h:2.15, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Eq. 8 — Optimal iteration count:", { x:0.42, y:3.28, w:5, h:0.28, fontSize:11, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:5.5, y:3.28, w:3.9, h:0.28, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("m = ⌊ (π/4) · √(2^N / M) ⌋      Source: Boyer et al., 1998", { x:5.5, y:3.28, w:3.9, h:0.28, fontSize:10, color:C.teal, valign:"middle", margin:4 });
+  const iterRows = [
+    [{text:"N (users)", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"States (2^N)", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"M (10% good)", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Iterations (m)", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"P_success", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"BRAM (16-bit)", options:{bold:true,color:C.white,fill:{color:C.navy}}}],
+    ["8","256","26","2","~96%",{text:"512 B ✓", options:{color:C.green}}],
+    ["10","1,024","102","2","~96%",{text:"2 KB ✓", options:{color:C.green}}],
+    ["12","4,096","410","2","~96%",{text:"8 KB ✓", options:{color:C.green}}],
+    ["16","65,536","6,554","2","~96%",{text:"128 KB ✓", options:{color:C.green}}],
+    [{text:"32", options:{color:C.red}},{text:"4.3 billion", options:{color:C.red}},"-","-","-",{text:"8 GB — IMPOSSIBLE", options:{color:C.red, bold:true}}],
+  ];
+  s.addTable(iterRows, {
+    x:0.3, y:3.62, w:9.4, h:1.7,
+    border:{pt:0.5, color:C.border}, fill:{color:C.white},
+    colW:[1.2, 1.6, 1.8, 1.6, 1.4, 1.8],
+    fontSize:10.5, fontFace:"Calibri", rowH:0.285,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 11 — QISKIT COMPLETE IMPLEMENTATION
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.teal}, line:{color:C.teal} });
+  s.addText("QISKIT IMPLEMENTATION — WHAT RUNS ON THE CPU (CLASSICAL SIMULATION)", { x:0.4, y:0, w:9.2, h:0.55, fontSize:14, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // Left: what Qiskit solves
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.65, w:3.2, h:4.75, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("What Qiskit solves:", { x:0.42, y:0.68, w:2.96, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  const qiskitSolves = [
+    ["Eq 1+2","Rate + FBL penalty calculation"],
+    ["Eq 3","Utility function (PF weights)"],
+    ["Eq 4","Constraint checking (oracle)"],
+    ["Eq 5","Amplitude state vector"],
+    ["Eq 6","Oracle (auto-built)"],
+    ["Eq 7","Diffusion operator"],
+    ["Eq 8","Iteration count"],
+    ["—","ArgMax → best schedule"],
+  ];
+  qiskitSolves.forEach(([eq, desc], i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:1.05+i*0.46, w:2.96, h:0.4, fill:{color:C.white}, line:{color:C.border} });
+    s.addText(eq, { x:0.47, y:1.05+i*0.46, w:0.72, h:0.4, fontSize:9.5, color:C.teal, bold:true, fontFace:"Courier New", valign:"middle", margin:0 });
+    s.addText(desc, { x:1.22, y:1.05+i*0.46, w:2.1, h:0.4, fontSize:9.5, color:C.text, valign:"middle", margin:0 });
+  });
+
+  // Right: code
+  s.addShape(pres.shapes.RECTANGLE, { x:3.65, y:0.65, w:6.05, h:4.75, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("# qiskit_scheduler.py — Complete baseline (use qiskit_algorithms, Qiskit ≥ 1.0)", { x:3.75, y:0.65, w:5.85, h:0.26, fontSize:8, color:"6A9955", fontFace:"Courier New", margin:0 });
+  const code = [
+    ["import numpy as np", C.white],
+    ["from qiskit import QuantumCircuit", C.white],
+    ["from qiskit_algorithms import Grover, AmplificationProblem", C.white],
+    ["from qiskit.primitives import StatevectorSampler", C.white],
+    ["", C.white],
+    ["N, K = 8, 4   # 8 users, schedule 4 per slot", C.white],
+    ["np.random.seed(None)   # NOT seed=42 — use multiple seeds!", "6A9955"],
+    ["sinr = 10**(np.random.uniform(-5,20,N)/10)", C.white],
+    ["weights = np.random.uniform(0.5, 1.5, N)", C.white],
+    ["", C.white],
+    ["# Threshold: greedy estimate (NOT O(2^N) enumeration)", "6A9955"],
+    ["greedy_sorted = np.argsort(weights*np.log2(1+sinr))[::-1][:K]", C.white],
+    ["thr = sum(weights[i]*np.log2(1+sinr[i]) for i in greedy_sorted)*0.9", C.white],
+    ["", C.white],
+    ["def utility(bs):", C.white],
+    ["    sel=[i for i,b in enumerate(bs) if b=='1']", C.white],
+    ["    if len(sel)!=K: return 0", C.white],
+    ["    return sum(weights[i]*np.log2(1+sinr[i]) for i in sel)", C.white],
+    ["", C.white],
+    ["def is_good(bs):   # Oracle — Eq 6", C.white],
+    ["    return utility(bs) >= thr", C.white],
+    ["", C.white],
+    ["problem = AmplificationProblem(is_good_state=is_good)", C.white],
+    ["grover  = Grover(sampler=StatevectorSampler())", C.white],
+    ["result  = grover.amplify(problem)", C.white],
+    ["print('Best schedule:', result.top_measurement)", C.white],
+    ["print('Utility:', utility(result.top_measurement))", C.white],
+  ];
+  code.forEach(([line, col], i) => {
+    s.addText(line, { x:3.75, y:0.93+i*0.165, w:5.85, h:0.165, fontSize:8.2, color:col, fontFace:"Courier New", margin:0 });
+  });
+
+  // Role label
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:5.42, w:9.4, h:0.28, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("Role of Qiskit: algorithmic correctness baseline — validates FPGA output; NOT the speed contribution", {
+    x:0.3, y:5.42, w:9.4, h:0.28, fontSize:10, color:C.teal, bold:true, align:"center", valign:"middle", margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 12 — FPGA IMPLEMENTATION
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("FPGA IMPLEMENTATION — WHAT RUNS IN HARDWARE (grover_kernel.cpp)", { x:0.4, y:0, w:9.2, h:0.55, fontSize:14, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // Left: what FPGA solves
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.65, w:3.2, h:3.5, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("What FPGA solves:", { x:0.42, y:0.68, w:2.96, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+  const fpgaSolves = [
+    ["Eq 5","Amplitude BRAM init (ARM PS)"],
+    ["Eq 6","Oracle sign-flip (HLS PL)"],
+    ["Eq 7","Mean + diffusion (HLS PL)"],
+    ["Eq 8","m iterations (HLS loop)"],
+    ["—","ArgMax → best state (HLS PL)"],
+    ["Eq 1+2","Rate calc (ARM PS pre-step)"],
+  ];
+  fpgaSolves.forEach(([eq, desc], i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:1.05+i*0.5, w:2.96, h:0.44, fill:{color:C.white}, line:{color:C.border} });
+    s.addText(eq, { x:0.47, y:1.05+i*0.5, w:0.72, h:0.44, fontSize:9.5, color:C.navy, bold:true, fontFace:"Courier New", valign:"middle", margin:0 });
+    s.addText(desc, { x:1.22, y:1.05+i*0.5, w:2.1, h:0.44, fontSize:9.5, color:C.text, valign:"middle", margin:0 });
+  });
+
+  // Right: HLS code
+  s.addShape(pres.shapes.RECTANGLE, { x:3.65, y:0.65, w:6.05, h:3.5, fill:{color:C.codeBg}, line:{color:C.codeBg} });
+  s.addText("// grover_kernel.cpp — HLS kernel (Vitis HLS)", { x:3.75, y:0.65, w:5.85, h:0.26, fontSize:8, color:"6A9955", fontFace:"Courier New", margin:0 });
+  const hlsLines = [
+    ["#include <ap_fixed.h>", C.white],
+    ["typedef ap_fixed<16,8,AP_RND,AP_SAT> amplitude_t;", C.white],
+    ["#define N_STATES 256  // 2^8 for N=8", "6A9955"],
+    ["#define N_ITER   2    // m = floor(pi/4 * sqrt(256/26))", "6A9955"],
+    ["", C.white],
+    ["void grover_kernel(amplitude_t amps[N_STATES],", C.white],
+    ["                   bool good[N_STATES],", C.white],
+    ["                   int* best_idx) {", C.white],
+    ["  #pragma HLS INTERFACE m_axi port=amps bundle=gmem0", "6A9955"],
+    ["  #pragma HLS INTERFACE m_axi port=good bundle=gmem1", "6A9955"],
+    ["  for(int iter=0; iter<N_ITER; iter++) {", C.white],
+    ["    // Oracle (Eq 6) — 16x unrolled = 16 parallel ops", "6A9955"],
+    ["    for(int i=0;i<N_STATES;i++){#pragma HLS UNROLL factor=16", C.white],
+    ["      amps[i] = good[i] ? -amps[i] : amps[i]; }", C.white],
+    ["    // Diffusion (Eq 7) — 8-stage reduction tree", "6A9955"],
+    ["    amplitude_t sum=0;", C.white],
+    ["    for(int i=0;i<N_STATES;i++) sum+=amps[i];", C.white],
+    ["    amplitude_t mean=sum/N_STATES;", C.white],
+    ["    for(int i=0;i<N_STATES;i++){#pragma HLS UNROLL factor=16", C.white],
+    ["      amps[i]=(2*mean)-amps[i]; }", C.white],
+    ["  }", C.white],
+    ["  // ArgMax — find best schedule", "6A9955"],
+    ["  *best_idx=0;", C.white],
+    ["  for(int i=1;i<N_STATES;i++) if(amps[i]>amps[*best_idx]) *best_idx=i;", C.white],
+    ["}", C.white],
+  ];
+  hlsLines.forEach(([line, col], i) => {
+    s.addText(line, { x:3.75, y:0.93+i*0.126, w:5.85, h:0.126, fontSize:7.8, color:col, fontFace:"Courier New", margin:0 });
+  });
+
+  // Latency + resource table
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:4.22, w:9.4, h:1.2, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Projected performance (requires measurement — not a claim):", { x:0.42, y:4.24, w:9, h:0.26, fontSize:10.5, color:C.navy, bold:true, margin:0 });
+  const perfRows = [
+    [{text:"N", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Kernel compute", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"DMA+PS overhead", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"End-to-end target", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"URLLC budget", options:{bold:true,color:C.white,fill:{color:C.navy}}}],
+    ["8","~1 μs (192 cycles @ 200 MHz)","~10–50 μs","< 100 μs",{text:"✓ 500 μs", options:{color:C.green}}],
+    ["16","~8 μs (1,536 cycles @ 200 MHz)","~50–200 μs","< 300 μs",{text:"✓ 500 μs", options:{color:C.green}}],
+  ];
+  s.addTable(perfRows, {
+    x:0.3, y:4.52, w:9.4, h:0.85,
+    border:{pt:0.5, color:C.border}, fill:{color:C.white},
+    colW:[0.7, 2.8, 2.5, 2.0, 1.4],
+    fontSize:10.5, fontFace:"Calibri", rowH:0.285,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 13 — SYSTEM ARCHITECTURE
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("SYSTEM ARCHITECTURE — KRIA KV260 + O-RAN CONTEXT", { x:0.4, y:0, w:9.2, h:0.55, fontSize:15, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // HOST PC
+  s.addShape(pres.shapes.RECTANGLE, { x:0.25, y:0.7, w:3.5, h:1.5, fill:{color:C.slateXlt}, line:{color:C.slate} });
+  s.addText("HOST PC (Development)", { x:0.35, y:0.72, w:3.3, h:0.28, fontSize:10, color:C.navy, bold:true, margin:0 });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.38, y:1.04, w:3.22, h:1.04, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("Python + Qiskit", { x:0.48, y:1.06, w:3.0, h:0.26, fontSize:10, color:C.teal, bold:true, margin:0 });
+  s.addText("• Baseline algorithm validation\n• Compares FPGA output\n• Runs 1000-seed MC study", { x:0.48, y:1.32, w:3.0, h:0.7, fontSize:9, color:C.text, margin:0 });
+
+  // Arrow PC to KV260
+  s.addShape(pres.shapes.LINE, { x:3.75, y:1.45, w:0.55, h:0, line:{color:C.slate, width:1.5, dashType:"dash"} });
+  s.addText("USB/\nEthernet", { x:3.75, y:1.2, w:0.6, h:0.4, fontSize:7.5, color:C.muted, align:"center", margin:0 });
+  s.addText("▶", { x:4.18, y:1.35, w:0.2, h:0.22, fontSize:12, color:C.slate, margin:0 });
+
+  // KV260
+  s.addShape(pres.shapes.RECTANGLE, { x:4.3, y:0.7, w:5.4, h:3.2, fill:{color:C.slateXlt}, line:{color:C.navy, width:1.5}, shadow:makeShadow() });
+  s.addText("AMD Kria KV260 FPGA SoC", { x:4.42, y:0.73, w:5.16, h:0.3, fontSize:12, color:C.navy, bold:true, margin:0 });
+
+  // ARM PS box
+  s.addShape(pres.shapes.RECTANGLE, { x:4.45, y:1.1, w:2.3, h:2.6, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("ARM Cortex-A53 (PS)", { x:4.55, y:1.13, w:2.1, h:0.28, fontSize:10, color:C.teal, bold:true, margin:0 });
+  const psItems = ["Pre-process CSI", "Compute rates (Eq 1+2)", "Set oracle threshold", "Run PYNQ Python driver", "Post-process schedule"];
+  psItems.forEach((it, i) => {
+    s.addText("• " + it, { x:4.55, y:1.45+i*0.42, w:2.1, h:0.38, fontSize:9, color:C.text, margin:0 });
+  });
+
+  // AXI arrow
+  s.addShape(pres.shapes.LINE, { x:6.75, y:2.42, w:0.5, h:0, line:{color:C.navy, width:2} });
+  s.addText("AXI-DMA", { x:6.72, y:2.22, w:0.6, h:0.26, fontSize:8, color:C.navy, align:"center", margin:0 });
+  s.addText("◀▶", { x:6.72, y:2.38, w:0.6, h:0.2, fontSize:10, color:C.navy, align:"center", margin:0 });
+
+  // PL box
+  s.addShape(pres.shapes.RECTANGLE, { x:7.25, y:1.1, w:2.3, h:2.6, fill:{color:C.navy+"18"}, line:{color:C.navy} });
+  s.addText("FPGA Fabric (PL)", { x:7.35, y:1.13, w:2.1, h:0.28, fontSize:10, color:C.navy, bold:true, margin:0 });
+  const plItems = ["Init amplitudes (BRAM)", "Oracle: sign flip (Eq 6)", "Diffusion: mean (Eq 7)", "m=2 iterations (Eq 8)", "ArgMax → best schedule"];
+  plItems.forEach((it, i) => {
+    s.addText("• " + it, { x:7.35, y:1.45+i*0.42, w:2.1, h:0.38, fontSize:9, color:C.text, margin:0 });
+  });
+
+  // Arrow KV260 to O-RAN
+  s.addShape(pres.shapes.LINE, { x:3.65, y:4.25, w:6.1, h:0, line:{color:C.teal, width:2} });
+  s.addText("▼", { x:6.55, y:4.18, w:0.3, h:0.25, fontSize:14, color:C.teal, align:"center", margin:0 });
+  s.addText("E2 Interface (E2SM-RC) — schedule decision sent to Near-RT RIC", { x:1.5, y:4.08, w:7, h:0.22, fontSize:9, color:C.teal, align:"center", margin:0 });
+
+  // O-RAN
+  s.addShape(pres.shapes.RECTANGLE, { x:2.8, y:4.42, w:4.4, h:0.82, fill:{color:C.navy+"12"}, line:{color:C.navy, width:1.5} });
+  s.addText("O-RAN DU/RU (Emulated)", { x:2.9, y:4.45, w:4.2, h:0.28, fontSize:10.5, color:C.navy, bold:true, margin:0 });
+  s.addText("Receives schedule → allocates PRBs to users  |  Spec: O-RAN Alliance WG3 v04.00", { x:2.9, y:4.76, w:4.2, h:0.44, fontSize:8.5, color:C.muted, margin:0 });
+
+  // Note
+  s.addText("Note: O-RAN integration is emulated in this project. Full E2 stack (OpenAirInterface) is future work.", {
+    x:0.3, y:5.38, w:9.4, h:0.22, fontSize:9, color:C.muted, margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 14 — EXPERIMENT DESIGN
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("EXPERIMENT DESIGN — THREE EXPERIMENTS, RIGOROUS METHODOLOGY", { x:0.4, y:0, w:9.2, h:0.55, fontSize:14, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  const exps = [
+    {
+      num:"1", title:"Algorithmic Correctness (CPU — Qiskit)",
+      color: C.teal,
+      items:[
+        "N ∈ {4, 6, 8}, K = N/2",
+        "1000 random channel realisations (different seeds)",
+        "Channel: 3GPP TR 38.901 TDL-C, Doppler fd=10 Hz",
+        "Compare: Grover output vs exhaustive (N≤10) + greedy",
+        "Metrics: utility ratio, constraint satisfaction rate, # iterations",
+        "Tools: Qiskit ≥ 1.0, qiskit_algorithms, StatevectorSampler",
+      ]
+    },
+    {
+      num:"2", title:"FPGA Latency Profiling (Kria KV260)",
+      color: C.navy,
+      items:[
+        "N ∈ {8, 12, 16}, K = N/2 — 100 timed runs each",
+        "Instrument each phase: DMA transfer / kernel / ArgMax",
+        "Measure end-to-end: ARM trigger → schedule output",
+        "Report: mean, std, min, max latency with box plots",
+        "Tools: Vitis HLS, Vivado 2023.x, PYNQ on KV260",
+        "Deliverable: Vivado resource report (LUT, DSP, BRAM %)",
+      ]
+    },
+    {
+      num:"3", title:"Scheduling Quality (Time-Varying Channels)",
+      color: C.slate,
+      items:[
+        "T = 1000 TTIs; Jakes' channel model (fd = 10 Hz)",
+        "PF weight update: R_i(t) = (1-α)R_i(t-1) + α·r_i(t), α=0.001",
+        "Metrics: Jain Fairness Index, cumulative throughput, outage %",
+        "Compare: Grover-FPGA vs greedy vs exhaustive (N≤10)",
+        "95% confidence intervals over 100 channel drops",
+        "Report: optimality gap = (U_grover − U_proposed) / U_grover",
+      ]
+    },
+  ];
+
+  exps.forEach(({num, title, color, items}, i) => {
+    const by = 0.68 + i*1.6;
+    s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:by, w:9.4, h:1.52, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+    s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:by, w:0.42, h:1.52, fill:{color:color}, line:{color:color} });
+    s.addText(num, { x:0.3, y:by, w:0.42, h:1.52, fontSize:18, color:C.white, bold:true, align:"center", valign:"middle", margin:0 });
+    s.addText(title, { x:0.84, y:by+0.08, w:8.7, h:0.3, fontSize:11.5, color:color, bold:true, margin:0 });
+    items.forEach((it, j) => {
+      const col = j < 3 ? 0 : 1;
+      const row = j % 3;
+      s.addText("• " + it, { x:0.84 + col*4.7, y:by+0.44+row*0.35, w:4.58, h:0.32, fontSize:9.5, color:C.text, margin:0 });
+    });
+  });
+
+  s.addText("Channel model: 3GPP TR 38.901 TDL-C  |  Fairness: Jain et al. DEC TR-301 1984  |  Statistics: 95% CI, n=1000 drops", {
+    x:0.3, y:5.44, w:9.4, h:0.22, fontSize:8.5, color:C.muted, margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 15 — HARDWARE PLATFORM
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("HARDWARE PLATFORM — AMD KRIA KV260 JUSTIFICATION", { x:0.4, y:0, w:9.2, h:0.55, fontSize:15, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // Specs
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:0.7, w:4.6, h:3.2, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("KV260 Specifications", { x:0.42, y:0.73, w:4.36, h:0.3, fontSize:12, color:C.navy, bold:true, margin:0 });
+  const specs = [
+    ["FPGA", "Zynq UltraScale+ MPSoC"],
+    ["LUTs", "144K look-up tables"],
+    ["DSPs", "360 DSP slices"],
+    ["BRAM", "5.1 MB (fits N≤16)"],
+    ["ARM CPU", "4× Cortex-A53 @ 1.2 GHz"],
+    ["DDR4", "4 GB system RAM"],
+    ["Software", "PYNQ (Python on ARM)"],
+    ["Price", "~$500 USD"],
+  ];
+  specs.forEach(([k, v], i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x:0.42, y:1.1+i*0.35, w:4.36, h:0.3, fill: i%2===0?C.white:C.offWht, line:{color:C.border} });
+    s.addText(k, { x:0.48, y:1.1+i*0.35, w:1.1, h:0.3, fontSize:10, color:C.muted, bold:true, valign:"middle", margin:0 });
+    s.addText(v, { x:1.62, y:1.1+i*0.35, w:3.1, h:0.3, fontSize:10, color:C.text, valign:"middle", margin:0 });
+  });
+
+  // Comparison table
+  s.addShape(pres.shapes.RECTANGLE, { x:5.1, y:0.7, w:4.6, h:3.2, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("Why KV260 vs alternatives:", { x:5.22, y:0.73, w:4.36, h:0.3, fontSize:12, color:C.navy, bold:true, margin:0 });
+  const alts = [
+    [{text:"Board", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"LUTs", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Price", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Verdict", options:{bold:true,color:C.white,fill:{color:C.navy}}}],
+    ["Raspberry Pi 4","None","$75",{text:"No FPGA", options:{color:C.red}}],
+    ["DE10-Nano","110K","$350",{text:"Fewer DSP", options:{color:C.amber}}],
+    ["ZCU104","144K","$2000",{text:"Too expensive", options:{color:C.amber}}],
+    [{text:"Kria KV260", options:{bold:true,color:C.teal}},"144K","$500",{text:"✓ CHOSEN", options:{color:C.green, bold:true}}],
+  ];
+  s.addTable(alts, {
+    x:5.1, y:1.1, w:4.6, h:2.7,
+    border:{pt:0.5, color:C.border}, fill:{color:C.white},
+    colW:[1.6, 1.1, 0.9, 1.0],
+    fontSize:10.5, fontFace:"Calibri", rowH:0.45,
+  });
+
+  // Memory adequacy
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:3.98, w:9.4, h:1.52, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+  s.addText("BRAM adequacy for each problem size:", { x:0.42, y:4.02, w:9.0, h:0.28, fontSize:11, color:C.navy, bold:true, margin:0 });
+  const memRows = [
+    [{text:"N", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"States", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Amplitudes @16-bit", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"good_state[] @1-bit", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Total BRAM", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Status", options:{bold:true,color:C.white,fill:{color:C.navy}}}],
+    ["8","256","512 B","32 B","~1 KB",{text:"✓ Trivial", options:{color:C.green}}],
+    ["12","4,096","8 KB","512 B","~9 KB",{text:"✓ Fine", options:{color:C.green}}],
+    ["16","65,536","128 KB","8 KB","~140 KB",{text:"✓ Fits (5.1 MB avail)", options:{color:C.green}}],
+    [{text:"32", options:{color:C.red}},{text:"4.3 B", options:{color:C.red}},{text:"8 GB", options:{color:C.red}},{text:"536 MB", options:{color:C.red}},{text:">>8 GB", options:{color:C.red}},{text:"✗ IMPOSSIBLE", options:{color:C.red, bold:true}}],
+  ];
+  s.addTable(memRows, {
+    x:0.3, y:4.34, w:9.4, h:1.12,
+    border:{pt:0.5, color:C.border}, fill:{color:C.white},
+    colW:[0.6, 1.2, 2.0, 2.0, 1.8, 1.8],
+    fontSize:10, fontFace:"Calibri", rowH:0.28,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 16 — 12-WEEK TIMELINE
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("12-WEEK PROJECT TIMELINE", { x:0.4, y:0, w:9.2, h:0.55, fontSize:18, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  const phases = [
+    { weeks:"Wk 1–2", title:"Foundation", color:C.teal, tasks:["Literature review (Grover, O-RAN, URLLC, 3GPP TR 38.901)","Set up Qiskit ≥ 1.0 environment, install qiskit_algorithms","Implement greedy + exhaustive baseline for N=4,6,8","Define channel model (TDL-C) and Monte Carlo harness"], milestone:"Baseline scheduler working + test harness ready" },
+    { weeks:"Wk 3–4", title:"Qiskit Grover", color:C.tealMid, tasks:["Implement rate + FBL (Eq 1+2) and utility (Eq 3+4)","Build oracle with greedy threshold (NOT O(2^N) enumeration)","Run Grover for N=4,6,8 over 1000 random seeds","Measure solution quality vs exhaustive and greedy"], milestone:"Algorithmic validation complete — quality metrics confirmed" },
+    { weeks:"Wk 5–6", title:"FPGA Setup", color:C.navy, tasks:["Install Vitis HLS + Vivado 2023.x","Set up Kria KV260 + PYNQ Python environment","Complete Vitis HLS tutorial (matrix multiply, fixed-point)","Design AXI-DMA data transfer protocol (PS ↔ PL)"], milestone:"Toolchain verified — simple HLS kernel on board" },
+    { weeks:"Wk 7–8", title:"HLS Kernel", color:C.slate, tasks:["Implement oracle step (Eq 6) — UNROLL factor=16","Implement parallel reduction tree for diffusion (Eq 7)","Implement m-iteration loop (Eq 8) with pipelining","C-simulation + RTL simulation in Vitis HLS"], milestone:"Kernel passing C-sim and RTL-sim vs Qiskit golden output" },
+    { weeks:"Wk 9–10", title:"Integration & Test", color:C.green, tasks:["AXI-DMA integration (ARM PS → PL → PS)","Write PYNQ Python driver + latency instrumentation","End-to-end test: N=8,12,16 — measure all three phases","Produce Vivado resource utilisation report"], milestone:"Full system running — latency + quality data collected" },
+    { weeks:"Wk 11–12", title:"Analysis & Thesis", color:C.teal, tasks:["Statistical analysis: 1000 MC drops, 95% CI, box plots","Comparison charts: FPGA vs greedy vs Qiskit-CPU","Write thesis (40+ pages) — write as you go each week!","Final presentation preparation and supervisor review"], milestone:"Thesis submitted — final presentation delivered" },
+  ];
+
+  phases.forEach(({weeks, title, color, tasks, milestone}, i) => {
+    const by = 0.65 + i*0.82;
+    s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:by, w:1.5, h:0.72, fill:{color:color}, line:{color:color} });
+    s.addText(weeks, { x:0.3, y:by, w:1.5, h:0.34, fontSize:10, color:C.white, bold:true, align:"center", valign:"middle", margin:0 });
+    s.addText(title, { x:0.3, y:by+0.34, w:1.5, h:0.34, fontSize:9.5, color:C.white, align:"center", valign:"middle", margin:0 });
+
+    s.addShape(pres.shapes.RECTANGLE, { x:1.9, y:by, w:5.8, h:0.72, fill:{color:C.slateXlt}, line:{color:C.border} });
+    tasks.slice(0,2).forEach((t, j) => {
+      s.addText("• " + t, { x:2.02, y:by+0.02+j*0.34, w:5.6, h:0.32, fontSize:9, color:C.text, margin:0 });
+    });
+
+    s.addShape(pres.shapes.RECTANGLE, { x:7.8, y:by, w:1.95, h:0.72, fill:{color:C.greenLt}, line:{color:C.green} });
+    s.addText("✓ " + milestone, { x:7.88, y:by, w:1.8, h:0.72, fontSize:7.8, color:C.green, valign:"middle", margin:2 });
+  });
+
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:5.55, w:9.4, h:0.25, fill:{color:C.goldLt}, line:{color:C.gold} });
+  s.addText("⚠  Write thesis weekly from Week 1 — don't leave writing to Weeks 11–12", {
+    x:0.3, y:5.55, w:9.4, h:0.25, fontSize:10, color:C.amber, bold:true, align:"center", valign:"middle", margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 17 — SUCCESS METRICS
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("SUCCESS METRICS & EXPECTED CONTRIBUTIONS", { x:0.4, y:0, w:9.2, h:0.55, fontSize:16, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  // Primary metrics table
+  s.addText("Primary performance targets:", { x:0.3, y:0.65, w:9.4, h:0.3, fontSize:12, color:C.navy, bold:true, margin:0 });
+  const metRows = [
+    [{text:"Metric", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Target", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Measurement method", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Tool", options:{bold:true,color:C.white,fill:{color:C.navy}}}],
+    ["End-to-end latency (N=8, K=4)","< 100 μs","PYNQ timer, 100 runs","Python time.perf_counter()"],
+    ["End-to-end latency (N=16, K=8)","< 500 μs","PYNQ timer, 100 runs","Python time.perf_counter()"],
+    ["Optimality gap vs exhaustive (N≤10)","< 10%","Utility ratio","Qiskit + exhaustive search"],
+    ["Optimality gap vs greedy (N=8,12,16)","< 5%","Utility ratio","FPGA output vs greedy"],
+    ["Jain Fairness Index (1000 TTIs)","≥ 0.85","Standard JFI formula","Python analysis"],
+    ["FPGA resource utilisation","< 80% LUTs","Vivado implementation report","Vivado 2023.x"],
+    ["Success probability (m=2 iters)","≥ 90%","Fraction of runs finding good state","Qiskit + FPGA comparison"],
+  ];
+  s.addTable(metRows, {
+    x:0.3, y:0.98, w:9.4, h:2.85,
+    border:{pt:0.5, color:C.border}, fill:{color:C.white},
+    colW:[3.2, 1.5, 2.7, 2.0],
+    fontSize:10, fontFace:"Calibri", rowH:0.357,
+  });
+
+  // Contributions
+  s.addText("Original contributions of this project:", { x:0.3, y:3.9, w:9.4, h:0.3, fontSize:12, color:C.navy, bold:true, margin:0 });
+  const contribs = [
+    { n:"1", t:"FPGA latency characterisation", d:"First measured end-to-end latency breakdown (DMA + kernel + ArgMax) for oracle-diffusion scheduling on FPGA for 6G URLLC", c:C.teal },
+    { n:"2", t:"Optimality vs speed trade-off", d:"Quantified quality gap vs greedy and exhaustive — shows whether FPGA acceleration is worth the engineering cost", c:C.navy },
+    { n:"3", t:"Open-source implementation", d:"Reproducible Qiskit baseline + Vitis HLS kernel + PYNQ driver — reusable by community; published on GitHub", c:C.slate },
+    { n:"4", t:"Hardware resource profile", d:"Vivado utilisation report shows whether the approach scales to real 6G base station FPGA hardware", c:C.green },
+  ];
+  contribs.forEach(({n, t, d, c}, i) => {
+    const bx = 0.3 + (i%2)*4.85;
+    const by = 4.26 + Math.floor(i/2)*0.62;
+    s.addShape(pres.shapes.RECTANGLE, { x:bx, y:by, w:4.65, h:0.56, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+    s.addShape(pres.shapes.RECTANGLE, { x:bx, y:by, w:0.35, h:0.56, fill:{color:c}, line:{color:c} });
+    s.addText(n, { x:bx, y:by, w:0.35, h:0.56, fontSize:13, color:C.white, bold:true, align:"center", valign:"middle", margin:0 });
+    s.addText(t, { x:bx+0.42, y:by+0.03, w:4.15, h:0.24, fontSize:10, color:c, bold:true, margin:0 });
+    s.addText(d, { x:bx+0.42, y:by+0.27, w:4.15, h:0.26, fontSize:8.5, color:C.muted, margin:0 });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 18 — RISK REGISTER
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("RISK REGISTER & FALLBACK PLANS", { x:0.4, y:0, w:9.2, h:0.55, fontSize:16, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  const risks = [
+    { risk:"HLS learning curve too steep", prob:"Med", impact:"High", mit:"Start with Vitis HLS tutorial (matrix multiply) in Week 5. Use AMD documentation. Ask supervisor for lab support. Allocate 2 full weeks.", fb:"Port kernel to CUDA GPU — still novel, less edge-relevant" },
+    { risk:"N=32 target infeasible (BRAM)", prob:"Certain", impact:"Med", mit:"Already scoped out. Hard cap is N=16. Document this in thesis as a design constraint, not a failure.", fb:"N/A — scoped correctly from Day 1" },
+    { risk:"PYNQ/DMA overhead kills <500 μs target", prob:"Med", impact:"High", mit:"Instrument each phase separately. If DMA dominates, optimise buffer size, use zero-copy DMA. Compare bare-metal vs PYNQ overhead.", fb:"Report latency breakdown honestly — contribution is still valid" },
+    { risk:"Qiskit vs FPGA numerical mismatch", prob:"Med", impact:"Med", mit:"Validate HLS C-simulation against Qiskit output before hardware synthesis. Use ap_fixed saturation to avoid overflow artefacts.", fb:"Accept <0.1% numerical difference as acceptable for fixed-point" },
+    { risk:"Board delayed / unavailable", prob:"Low", impact:"High", mit:"Order KV260 immediately or confirm lab availability this week. IBM Quantum simulator (free tier) as algorithm backup only.", fb:"All Qiskit work + channel simulations still completable on CPU" },
+    { risk:"Thesis writing falls behind", prob:"High", impact:"High", mit:"Write one section per week from Week 1. Keep a lab notebook for every experiment. Draft conclusions before final results are in.", fb:"N/A — time management discipline required" },
+  ];
+
+  const riskRows = [
+    [{text:"Risk", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Prob", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Impact", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Mitigation", options:{bold:true,color:C.white,fill:{color:C.navy}}},{text:"Fallback", options:{bold:true,color:C.white,fill:{color:C.navy}}}],
+    ...risks.map(({risk, prob, impact, mit, fb}) => [
+      risk,
+      { text:prob, options:{ color: prob==="High"?C.red : prob==="Certain"?C.red : prob==="Med"?C.amber : C.green } },
+      { text:impact, options:{ color: impact==="High"?C.red : impact==="Med"?C.amber : C.green } },
+      mit,
+      fb,
+    ])
+  ];
+  s.addTable(riskRows, {
+    x:0.3, y:0.65, w:9.4, h:4.8,
+    border:{pt:0.5, color:C.border}, fill:{color:C.white},
+    colW:[2.5, 0.6, 0.7, 3.3, 2.3],
+    fontSize:9.5, fontFace:"Calibri", rowH:0.68,
+  });
+
+  s.addShape(pres.shapes.RECTANGLE, { x:0.3, y:5.5, w:9.4, h:0.22, fill:{color:C.tealLt}, line:{color:C.teal} });
+  s.addText("Primary fallback: if FPGA implementation fails entirely → complete all Qiskit experiments + statistical analysis — still a valid MSc contribution", {
+    x:0.3, y:5.5, w:9.4, h:0.22, fontSize:9.5, color:C.teal, valign:"middle", align:"center", margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 19 — LITERATURE SUMMARY
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.white };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:10, h:0.55, fill:{color:C.navy}, line:{color:C.navy} });
+  s.addText("KEY LITERATURE — 8 ESSENTIAL REFERENCES", { x:0.4, y:0, w:9.2, h:0.55, fontSize:16, color:C.white, bold:true, valign:"middle", margin:0 });
+
+  const refs = [
+    { cat:"Quantum", col:C.teal, title:"Grover (1996)", venue:"STOC", note:"Original Grover search — basis for oracle-diffusion equations" },
+    { cat:"Quantum", col:C.teal, title:"Boyer et al. (1998)", venue:"Fortschr. Phys.", note:"Optimal iteration count m = ⌊π/4·√(2^N/M)⌋ — Eq 8" },
+    { cat:"Quantum", col:C.teal, title:"Dürr & Høyer (1996)", venue:"arXiv quant-ph", note:"Adaptive threshold — avoids O(2^N) pre-enumeration" },
+    { cat:"URLLC", col:C.navy, title:"Polyanskiy et al. (2010)", venue:"IEEE Trans. Inf. Theory", note:"Finite blocklength rate formula — Equations 1 + 2" },
+    { cat:"URLLC", col:C.navy, title:"3GPP TR 38.824 + ITU-R M.2160", venue:"Standards", note:"5G URLLC requirements + 6G IMT-2030 framework" },
+    { cat:"Scheduling", col:C.slate, title:"Lee et al. (2024)", venue:"Q-xApp paper", note:"Direct source of scheduling formulation and equations" },
+    { cat:"O-RAN", col:C.green, title:"O-RAN Alliance WG3 v04.00", venue:"O-RAN Spec", note:"E2 interface specification — architecture slide" },
+    { cat:"FPGA", col:C.gold, title:"Nane et al. (2016)", venue:"IEEE TCAD", note:"HLS tool evaluation — justifies Vitis HLS toolchain choice" },
+  ];
+
+  refs.forEach(({cat, col, title, venue, note}, i) => {
+    const bx = 0.3 + (i%2)*4.85;
+    const by = 0.72 + Math.floor(i/2)*1.15;
+    s.addShape(pres.shapes.RECTANGLE, { x:bx, y:by, w:4.65, h:1.05, fill:{color:C.slateXlt}, line:{color:C.border}, shadow:makeCardShadow() });
+    s.addShape(pres.shapes.RECTANGLE, { x:bx, y:by, w:0.9, h:0.35, fill:{color:col}, line:{color:col} });
+    s.addText(cat, { x:bx, y:by, w:0.9, h:0.35, fontSize:8.5, color:C.white, bold:true, align:"center", valign:"middle", margin:0 });
+    s.addText(title, { x:bx+0.98, y:by+0.04, w:3.58, h:0.3, fontSize:11, color:C.navy, bold:true, margin:0 });
+    s.addText(venue, { x:bx+0.98, y:by+0.34, w:3.58, h:0.22, fontSize:8.5, color:C.muted, margin:0 });
+    s.addText(note, { x:bx+0.04, y:by+0.58, w:4.54, h:0.44, fontSize:9.5, color:C.text, margin:4 });
+  });
+
+  s.addText("Full annotated bibliography with 26 references provided in separate literature_review_and_critique.md", {
+    x:0.3, y:5.48, w:9.4, h:0.24, fontSize:9.5, color:C.muted, margin:0
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 20 — CONCLUSION
+// ═══════════════════════════════════════════════════════════
+{
+  let s = pres.addSlide();
+  s.background = { color: C.navy };
+  s.addShape(pres.shapes.RECTANGLE, { x:0, y:0, w:0.25, h:5.625, fill:{color:C.teal}, line:{color:C.teal} });
+  s.addShape(pres.shapes.RECTANGLE, { x:0.25, y:5.56, w:9.75, h:0.065, fill:{color:C.teal}, line:{color:C.teal} });
+
+  s.addText("CONCLUSION & NEXT STEPS", { x:0.55, y:0.3, w:9.0, h:0.5, fontSize:26, color:C.white, bold:true, fontFace:"Calibri", margin:0 });
+
+  // Summary checklist
+  const checks = [
+    ["✓", "Clear problem", "6G base station needs <500 μs user scheduling"],
+    ["✓", "Honest solution", "FPGA accelerator using oracle-diffusion pattern — not quantum computing"],
+    ["✓", "Correct equations", "Eqs 1–8: Rate, FBL, Utility, Constraints, State, Oracle, Diffusion, Iterations"],
+    ["✓", "Feasible scope", "N ≤ 16 users on Kria KV260 — N=32 explicitly ruled out"],
+    ["✓", "Rigorous experiments", "3 experiments, 1000 Monte Carlo drops, 95% CI, 3GPP channel model"],
+    ["✓", "Novel contribution", "First FPGA latency characterisation for this scheduling pattern in 6G context"],
+  ];
+  checks.forEach(([tick, bold, rest], i) => {
+    s.addShape(pres.shapes.RECTANGLE, { x:0.55, y:1.0+i*0.6, w:9.0, h:0.52, fill:{color:C.white+"15"}, line:{color:C.teal+"60"} });
+    s.addText(tick, { x:0.65, y:1.0+i*0.6, w:0.35, h:0.52, fontSize:16, color:C.teal, align:"center", valign:"middle", margin:0 });
+    s.addText(bold + ":  " + rest, { x:1.08, y:1.0+i*0.6, w:8.3, h:0.52, fontSize:11, color:C.white, valign:"middle", margin:0 });
+  });
+
+  // Next steps
+  s.addText("This week's actions:", { x:0.55, y:4.72, w:4.2, h:0.26, fontSize:11, color:C.teal, bold:true, margin:0 });
+  s.addText("1. Order KV260 or confirm lab board availability\n2. Install Qiskit ≥ 1.0 + qiskit_algorithms\n3. Run greedy baseline for N=4,6,8 — sanity check\n4. Agree scope (N ≤ 16) with supervisor", {
+    x:0.55, y:4.98, w:4.0, h:0.5, fontSize:9.5, color:C.white+"CC", margin:0
+  });
+
+  s.addText("Questions for supervisor:", { x:5.2, y:4.72, w:4.2, h:0.26, fontSize:11, color:C.teal, bold:true, margin:0 });
+  s.addText("1. KV260 board in lab available?\n2. Confirm N ≤ 16 is acceptable scope\n3. Prior student code to build on?\n4. Preferred channel model for URLLC sim?", {
+    x:5.2, y:4.98, w:4.0, h:0.5, fontSize:9.5, color:C.white+"CC", margin:0
+  });
+}
+
+pres.writeFile({ fileName: "/mnt/user-data/outputs/URLLC_FPGA_Scheduling_MSc.pptx" });
+console.log("Done");

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MSc Project: Quantum-Inspired User Scheduling for 6G URLLC on FPGA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #eef2f5;
+            color: #1a2c3e;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        /* Slide container */
+        .slide-deck {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            padding: 2rem 2.2rem;
+            transition: all 0.2s;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        /* slide headers */
+        .slide-header {
+            margin-bottom: 1.75rem;
+            border-left: 5px solid #0f6bff;
+            padding-left: 1.2rem;
+        }
+        .slide-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #0a2540, #1e6f5c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .slide-sub {
+            font-size: 0.9rem;
+            color: #4a627a;
+            margin-top: 0.3rem;
+        }
+
+        /* grids & cards */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 1.2rem 0;
+        }
+        .card {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid #e2edf2;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            color: #0f3b5c;
+            border-left: 3px solid #0f6bff;
+            padding-left: 0.75rem;
+        }
+        .equation {
+            background: #0a1922;
+            color: #cde9ff;
+            font-family: 'SF Mono', 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            padding: 1rem;
+            border-radius: 20px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .code-block {
+            background: #1e2a36;
+            color: #e2f0fa;
+            border-radius: 16px;
+            padding: 0.9rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.65rem 0.5rem;
+            border-bottom: 1px solid #dce5ec;
+        }
+        th {
+            background: #eef3fa;
+            font-weight: 600;
+        }
+        .badge {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #1f5e8c;
+        }
+        .highlight {
+            background: #e9f5ff;
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        hr {
+            margin: 1rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbdde9, transparent);
+        }
+        footer.page-marker {
+            text-align: right;
+            font-size: 0.7rem;
+            color: #8ba0b2;
+            margin-top: 1rem;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .slide {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-after: always;
+                break-inside: avoid;
+            }
+            .badge, .card {
+                break-inside: avoid;
+            }
+        }
+        .mono {
+            font-family: monospace;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<div class="slide-deck">
+
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide">
+        <div class="slide-header">
+            <div class="slide-title">⚛️ Quantum-Inspired User Scheduling<br>for 6G URLLC on FPGA</div>
+            <div class="slide-sub">A Q-xApp Implementation for O-RAN | MSc Project Proposal</div>
+        </div>
+        <div style="margin: 2rem 0 1rem 0;">
+            <p><strong>Candidate:</strong> [Your Name] – FPGA/SoC Design Engineer<br>
+            <strong>Supervisor:</strong> [Supervisor Name]<br>
+            <strong>Platform:</strong> AMD Kria KV260 + Qiskit · <strong>Duration:</strong> 12 weeks</p>
+        </div>
+        <div class="card" style="background:#eef2fa;">
+            <p style="font-size:0.9rem;">📡 <strong>Background:</strong> 6G demands &lt;500µs scheduling · Classical methods fail at scale → Quantum-inspired Grover search accelerated on FPGA.</p>
+        </div>
+        <footer class="page-marker">1 / 20</footer>
+    </div>
+
+    <!-- SLIDE 2: PROBLEM STATEMENT -->
+    <div class="slide">
+        <div class="slide-header">
+            <div class="slide-title">📉 The Problem Statement</div>
+        </div>
+        <p style="font-size:1.1rem; font-weight:500;">“Schedule N users over K PRBs within &lt;500µs with &gt;99.999% reliability.”</p>
+        <div class="grid-2">
+            <div class="card"><div class="card-title">⚠️ Classical bottlenecks</div>
+                <ul style="margin-left: 1.2rem;">
+                    <li>Exhaustive search: <strong>O(2^{KN})</strong> → impossible</li>
+                    <li>Greedy: fast but <strong>15–30% suboptimal</strong></li>
+                    <li>Deep RL: 5–50ms → violates URLLC</li>
+                    <li>Qiskit on CPU: 10–100ms overhead</li>
+                </ul>
+            </div>
+            <div class="card"><div class="card-title">🎯 Research gap</div>
+                “No FPGA-accelerated quantum-inspired scheduler meets 6G URLLC real-time constraints.”
+            </div>
+        </div>
+        <div class="equation">
+            ▶ Target: &lt;500 μs decision latency for N=32, K=8 · reliability 99.9999%
+        </div>
+        <footer class="page-marker">2 / 20</footer>
+    </div>
+
+    <!-- SLIDE 3: 6G URLLC Targets -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">📡 6G URLLC Requirements (3GPP TR 38.824)</div></div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">🎯 Key targets</div>
+                <ul>
+                    <li>Air interface latency: <strong>&lt;0.1 ms</strong></li>
+                    <li>End-to-end: <strong>&lt;1 ms</strong></li>
+                    <li>Reliability: <strong>99.9999%</strong> (10⁻⁶)</li>
+                    <li>Scheduling decision: <strong>&lt;500 μs</strong> ← my stretch</li>
+                </ul>
+            </div>
+            <div class="card">
+                <div class="card-title">🚗 Driving use cases</div>
+                <ul><li>Autonomous platooning</li><li>Industrial robotics</li><li>Tactile Internet / AR</li><li>Remote surgery</li></ul>
+            </div>
+        </div>
+        <div class="highlight" style="padding:0.5rem; background:#deeaf5;">→ Classical scheduling cannot meet strict deadlines at scale → Grover’s quadratic speedup is essential.</div>
+        <footer class="page-marker">3 / 20</footer>
+    </div>
+
+    <!-- SLIDE 4: SOLUTION OVERVIEW + WHAT NOT IMPLEMENTING -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">🧩 Proposed solution: Grover search + FPGA</div></div>
+        <div class="grid-2">
+            <div class="card"><div class="card-title">✅ What I implement</div>
+                <ul><li>Grover’s algorithm (amplitude amplification)</li><li>Quantum state representation (2^N superpositions)</li><li>Oracle + diffusion operators (Equations 4 & 5)</li><li>Hybrid ARM+FPGA on Kria KV260</li></ul>
+            </div>
+            <div class="card"><div class="card-title">❌ NOT implementing</div>
+                <ul><li>Quantum Neural Networks</li><li>Deep Reinforcement Learning</li><li>Real quantum hardware (IBM/Google)</li><li>Training or backpropagation</li></ul>
+            </div>
+        </div>
+        <div class="equation">
+            ⚛️ Quantum-inspired = classical simulation of Grover but with FPGA-level parallelism.
+        </div>
+        <footer class="page-marker">4 / 20</footer>
+    </div>
+
+    <!-- SLIDE 5: EQUATION 1 (Rate) -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">📐 Eq. (1): Achievable data rate (URLLC short block)</div></div>
+        <div class="equation">
+            R_{ia} = B_a \left[ \log_2\left(1 + \frac{P_{\text{RU}}|h_{ia}|^2}{\sigma^2}\right) - \zeta_{ia} \right]
+        </div>
+        <div class="equation">
+            \zeta_{ia} = \log_2(e) \cdot Q^{-1}(\epsilon) \cdot \sqrt{\frac{\eta_{ia}}{l_{ia}}}, \quad 
+            \eta_{ia} = 1 - \left(\frac{\sigma^2}{\sigma^2+P_a|h_{ia}|^2}\right)^2
+        </div>
+        <div class="code-block">
+            # Qiskit implementation snippet<br>
+            def calculate_rate(B, P, h, sigma2, eps, l):<br>
+            &nbsp;&nbsp;&nbsp; sinr = P*abs(h)**2/sigma2<br>
+            &nbsp;&nbsp;&nbsp; shannon = log2(1+sinr)<br>
+            &nbsp;&nbsp;&nbsp; eta = 1 - (sigma2/(sigma2+P*abs(h)**2))**2<br>
+            &nbsp;&nbsp;&nbsp; zeta = log2(e)*qinv(eps)*sqrt(eta/l)<br>
+            &nbsp;&nbsp;&nbsp; return B*(shannon - zeta)
+        </div>
+        <footer class="page-marker">5 / 20</footer>
+    </div>
+
+    <!-- SLIDE 6: EQUATION 2 Utility + constraints -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">📈 Eq. (2): Utility function & PF fairness</div></div>
+        <div class="equation">
+            U(\mathcal{S}) = \sum_{i \in \mathcal{S}} w_i \cdot \log_2(1+\text{SINR}_i), \quad w_i = \frac{r_i(t)}{R_i(t)}
+        </div>
+        <div class="grid-2">
+            <div class="card"><div class="card-title">Constraints (Q-xApp)</div>
+                <ul><li>(4a) Σ_i x_{ia}=1 (each PRB one user)</li><li>(4b) Σ_a x_{ia} ≤ C_i (fairness cap)</li><li>(4c) Σ_a R_{ia}x_{ia} ≥ R_min (QoS)</li></ul>
+            </div>
+            <div class="card"><div class="card-title">Oracle good-state condition</div>
+                <ul><li>|schedule| = K</li><li>Utility ≥ threshold (top 10%)</li><li>All SINR_i ≥ γ_min</li></ul>
+            </div>
+        </div>
+        <footer class="page-marker">6 / 20</footer>
+    </div>
+
+    <!-- SLIDE 7: Equation 3 Quantum state + tensor product -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">🧠 Eq. (3): Quantum state & tensor product encoding</div></div>
+        <div class="equation">
+            |\Psi\rangle = \bigotimes_{i=1}^{N} |u_i\rangle = \sum_{x=0}^{2^N-1} \alpha_x |x\rangle,\quad \sum |\alpha_x|^2=1
+        </div>
+        <div class="equation">
+            \text{Initial superposition: } |\Psi_0\rangle = \frac{1}{\sqrt{2^N}}\sum_{x=0}^{2^N-1}|x\rangle
+        </div>
+        <div class="code-block">
+            # Qiskit: create uniform superposition over N qubits<br>
+            qc = QuantumCircuit(N)<br>
+            for i in range(N): qc.h(i)   # Hadamard gates
+        </div>
+        <p class="badge">Tensor product example |1010⟩ = |1⟩⊗|0⟩⊗|1⟩⊗|0⟩ → user set {1,3}</p>
+        <footer class="page-marker">7 / 20</footer>
+    </div>
+
+    <!-- SLIDE 8: Equation 4 Oracle -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">🎯 Eq. (4): Grover oracle – marking good schedules</div></div>
+        <div class="equation">
+            O|x\rangle = (-1)^{f(x)}|x\rangle, \quad f(x)=1 \text{ if schedule x is GOOD}
+        </div>
+        <div class="card">
+            <div class="card-title">Implementation in Qiskit</div>
+            <div class="code-block">
+class SchedulingProblem(AmplificationProblem):<br>
+&nbsp;&nbsp;&nbsp; def is_good_state(self, bitstring):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if bitstring.count('1') != self.K: return False<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return self.utility(bitstring) >= self.threshold
+            </div>
+        </div>
+        <footer class="page-marker">8 / 20</footer>
+    </div>
+
+    <!-- SLIDE 9: Equation 5 Diffusion operator -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">🌀 Eq. (5): Diffusion operator (amplitude amplification)</div></div>
+        <div class="equation">
+            D = 2|\Psi\rangle\langle\Psi| - I, \quad |\Psi\rangle = \frac{1}{\sqrt{2^N}}\sum_x |x\rangle
+        </div>
+        <div class="equation">
+            \text{One Grover iteration: } |\psi_{k+1}\rangle = D \cdot O \cdot |\psi_k\rangle
+        </div>
+        <div class="card">
+            <div class="card-title">FPGA implementation (parallel mean reflection)</div>
+            <div class="code-block">
+for i in range(N_STATES):<br>
+&nbsp;&nbsp;&nbsp; out[i] = (2*mean) - after_oracle[i];   // diffusion in HW
+            </div>
+        </div>
+        <footer class="page-marker">9 / 20</footer>
+    </div>
+
+    <!-- SLIDE 10: Equation 6 Number of iterations -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">🔁 Eq. (6): Optimal Grover iterations</div></div>
+        <div class="equation">
+            m = \left\lfloor \frac{\pi}{4}\sqrt{\frac{2^N}{M}} \right\rfloor, \quad P_{\text{success}} = \sin^2\left((2m+1)\arcsin\sqrt{M/2^N}\right)
+        </div>
+        <table style="margin-top:12px">
+            <tr><th>N (users)</th><th>2^N</th><th>M (10%)</th><th>√(2^N/M)</th><th>m</th></tr>
+            <tr><td>8</td><td>256</td><td>26</td><td>3.14</td><td>2</td></tr>
+            <tr><td>10</td><td>1024</td><td>102</td><td>3.17</td><td>2</td></tr>
+            <tr><td>12</td><td>4096</td><td>410</td><td>3.16</td><td>2</td></tr>
+        </table>
+        <p class="highlight" style="margin-top: 0.75rem;">Grover internally selects m → high success probability (>96% for N=8).</p>
+        <footer class="page-marker">10 / 20</footer>
+    </div>
+
+    <!-- SLIDE 11: Qiskit baseline -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">🐍 Qiskit baseline – what I will code</div></div>
+        <div class="code-block">
+import numpy as np<br>
+from qiskit.algorithms import Grover, AmplificationProblem<br>
+# N=8, K=4, random SINR & PF weights<br>
+def utility(bitstring):<br>
+&nbsp;&nbsp;&nbsp; if sum(map(int,bitstring)) != K: return 0<br>
+&nbsp;&nbsp;&nbsp; return sum(weights[i]*np.log2(1+sinr_lin[i]) for i,b in enumerate(bitstring) if b=='1')<br>
+<br>
+threshold = np.percentile([utility(f"{i:08b}") for i in range(256)], 90)<br>
+problem = AmplificationProblem(is_good_state=lambda bs: utility(bs)>=threshold and bs.count('1')==K)<br>
+grover = Grover()<br>
+result = grover.amplify(problem)<br>
+print(f"Best schedule: {result.top_measurement}  utility={utility(result.top_measurement)}")
+        </div>
+        <footer class="page-marker">11 / 20</footer>
+    </div>
+
+    <!-- SLIDE 12: FPGA HLS kernel core -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">⚙️ FPGA kernel (HLS) – grover_iteration</div></div>
+        <div class="code-block">
+typedef ap_fixed&lt;16,8,AP_RND,AP_SAT&gt; amp_t;<br>
+#define N_STATES 256<br>
+void grover_iteration(amp_t amps[N_STATES], bool good[N_STATES], amp_t out[N_STATES]) {<br>
+&nbsp;&nbsp;&nbsp; #pragma HLS PIPELINE<br>
+&nbsp;&nbsp;&nbsp; for(int i=0;i&lt;N_STATES;i++) out[i] = good[i] ? -amps[i] : amps[i];<br>
+&nbsp;&nbsp;&nbsp; amp_t sum=0; for(int i=0;i&lt;N_STATES;i++) sum += out[i];<br>
+&nbsp;&nbsp;&nbsp; amp_t mean = sum / N_STATES;<br>
+&nbsp;&nbsp;&nbsp; for(int i=0;i&lt;N_STATES;i++) out[i] = (2*mean) - out[i];  // diffusion<br>
+}
+        </div>
+        <p>Parallel factor 16 → ~192 cycles @200MHz → <strong>&lt;10 µs per full Grover</strong></p>
+        <footer class="page-marker">12 / 20</footer>
+    </div>
+
+    <!-- SLIDE 13: FPGA vs CPU projections -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">⚡ Speedup: FPGA vs CPU (Qiskit)</div></div>
+        <table>
+            <tr><th>N (users)</th><th>CPU (Qiskit)</th><th>FPGA (projected)</th><th>Speedup</th></tr>
+            <tr><td>8</td><td>~10–50 ms</td><td>&lt;50 µs</td><td>200–1000×</td></tr>
+            <tr><td>16</td><td>~seconds (state explosion)</td><td>&lt;200 µs*</td><td>&gt;10^4×</td></tr>
+            <tr><td>32</td><td>intractable</td><td>&lt;500 µs (amplitude encoding)</td><td>enables real-time</td></tr>
+        </table>
+        <div class="card" style="margin-top:1rem;">* amplitude encoding: store K×N utility matrix, compute utilities on the fly → 64×16 values.</div>
+        <footer class="page-marker">13 / 20</footer>
+    </div>
+
+    <!-- SLIDE 14: Hardware justification Kria KV260 -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">🖥️ Platform: AMD Kria KV260</div></div>
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Specs</div>
+                <ul><li>Zynq MPSoC: 144K LUTs, 360 DSP</li><li>4× Cortex-A53 @1.2GHz</li><li>4GB DDR4 + 5.1 MB BRAM</li><li>PYNQ framework</li><li>~$500</li></ul>
+            </div>
+            <div class="card">
+                <div class="card-title">Why Kria?</div>
+                <ul><li>RPi: no FPGA</li><li>ZCU104: $2000 overkill</li><li>Altera DE10: fewer DSP</li><li><strong>Kria = best balance: resources + price + PYNQ</strong></li></ul>
+            </div>
+        </div>
+        <div class="equation">FPGA resource fit: 256 states × 16-bit = 4KB BRAM (well within capacity). 360 DSPs → 16-wide parallel amplitude operations.</div>
+        <footer class="page-marker">14 / 20</footer>
+    </div>
+
+    <!-- SLIDE 15: Architecture diagram text + AXI -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">🏗️ O-RAN + Q-xApp system architecture</div></div>
+        <div class="code-block">
+[Host PC] Qiskit baseline validation<br>
+      │ Ethernet<br>
+[Kria KV260] ┌───────────┐      ┌─────────────────┐<br>
+             │ ARM (PS)  │◄─AXI─►│ FPGA PL (Grover) │<br>
+             │ - preproc  │      │ - amplitude vec  │<br>
+             │ - threshold│      │ - oracle+diffuse │<br>
+             │ - driver   │      │ - measurement    │<br>
+             └─────┬─────┘      └─────────────────┘<br>
+                   │ E2 interface emulation<br>
+             [O-DU/O-RU scheduler]
+        </div>
+        <p>Python on ARM calls HLS kernel via DMA; schedule decision sent back &lt;500µs loop.</p>
+        <footer class="page-marker">15 / 20</footer>
+    </div>
+
+    <!-- SLIDE 16: TIMELINE 12 weeks -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">📅 12-week execution timeline</div></div>
+        <div class="grid-2">
+            <div class="card"><strong>Week 1-2</strong><br>Literature, setup Qiskit, greedy/exhaustive baseline</div>
+            <div class="card"><strong>Week 3-4</strong><br>Grover in Qiskit (N=8), oracle, validation</div>
+            <div class="card"><strong>Week 5-6</strong><br>Vitis/Vivado install, Kria bring-up, HLS intro</div>
+            <div class="card"><strong>Week 7-8</strong><br>HLS Grover kernel, simulation, pipeline</div>
+            <div class="card"><strong>Week 9-10</strong><br>AXI integration, Python driver, full system test</div>
+            <div class="card"><strong>Week 11-12</strong><br>Benchmark (N=8..32), thesis writing, results</div>
+        </div>
+        <div class="badge" style="margin-top:0.75rem;">✅ Buffer week 13-14 for final defense preparation</div>
+        <footer class="page-marker">16 / 20</footer>
+    </div>
+
+    <!-- SLIDE 17: Success metrics -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">📊 Expected outcomes & success metrics</div></div>
+        <table>
+            <tr><th>Metric</th><th>Target</th><th>Measurement</th></tr>
+            <tr><td>Latency (N=32)</td><td>&lt;500 µs</td><td>FPGA hardware timer</td></tr>
+            <tr><td>Optimality gap vs exact</td><td>&lt;10%</td><td>utility comparison</td></tr>
+            <tr><td>Speedup vs greedy</td><td>&gt;2×</td><td>latency ratio</td></tr>
+            <tr><td>Jain fairness index</td><td>&gt;0.85</td><td>fairness formula</td></tr>
+            <tr><td>FPGA resource</td><td>&lt;80% LUTs</td><td>Vivado report</td></tr>
+        </table>
+        <div class="card" style="margin-top:1rem;">📌 Novelty claim: first FPGA-accelerated Grover-based user scheduling for 6G URLLC O-RAN.</div>
+        <footer class="page-marker">17 / 20</footer>
+    </div>
+
+    <!-- SLIDE 18: Risk assessment -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">⚠️ Risk mitigation</div></div>
+        <div class="grid-2">
+            <div class="card"><strong>HLS learning curve</strong> → start with simple kernels, online tutorials</div>
+            <div class="card"><strong>Latency miss</strong> → reduce N to 24 or 16 (still valid)</div>
+            <div class="card"><strong>Board delay</strong> → order now; fallback: IBM Quantum simulator</div>
+            <div class="card"><strong>Thesis writing</strong> → write weekly, keep journal</div>
+        </div>
+        <div class="highlight" style="margin-top:1rem;">🔁 Fallback: GPU (CUDA) implementation of amplitude amplification – still real-time contribution.</div>
+        <footer class="page-marker">18 / 20</footer>
+    </div>
+
+    <!-- SLIDE 19: Conclusion & next steps -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">✅ Conclusion & immediate next steps</div></div>
+        <ul style="margin-bottom: 1rem;">
+            <li>✓ Clear problem: 6G scheduling <500µs</li>
+            <li>✓ Solution: Grover (O(√N)) mapped to Kria FPGA</li>
+            <li>✓ All equations defined: rate, utility, state, oracle, diffusion, iterations</li>
+            <li>✓ Timeline realistic (12 weeks), builds on FPGA expertise</li>
+        </ul>
+        <div class="card">
+            <div class="card-title">📌 Next 7 days</div>
+            <ol style="margin-left:1rem;">
+                <li>Order Kria KV260 or confirm lab availability</li>
+                <li>Install Qiskit, run N=4 Grover example</li>
+                <li>Meet supervisor to review equations & timeline</li>
+                <li>Start weekly progress tracking</li>
+            </ol>
+        </div>
+        <footer class="page-marker">19 / 20</footer>
+    </div>
+
+    <!-- SLIDE 20: Q&A / equation reference -->
+    <div class="slide">
+        <div class="slide-header"><div class="slide-title">📚 Quick reference – key equations for presentation</div></div>
+        <div class="equation">(2) R_{ia} = B_a[log₂(1+SINR)-ζ]  &nbsp;&nbsp; (3) ζ = log₂(e)·Q⁻¹(ε)·√(η/l)</div>
+        <div class="equation">U(S) = Σ w_i·log₂(1+SINR_i)   &nbsp;&nbsp; |Ψ⟩ = (1/√2^N)Σ|x⟩</div>
+        <div class="equation">O|x⟩ = (-1)^{f(x)}|x⟩ &nbsp;&nbsp; D = 2|Ψ⟩⟨Ψ|-I &nbsp;&nbsp; m = ⌊π/4 √(2^N/M)⌋</div>
+        <div class="card" style="margin-top:1.2rem;">
+            “I will implement Grover’s search for user scheduling, accelerate amplitude amplification on Kria FPGA, and demonstrate &lt;500µs latency with >95% optimality.”
+        </div>
+        <footer class="page-marker">20 / 20</footer>
+    </div>
+</div>
+</body>
+</html>

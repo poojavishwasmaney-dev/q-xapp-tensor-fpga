@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+</head>
+<body>
+    <button onclick="generatePPT()" style="padding: 20px; font-size: 18px; margin: 50px; background: #0072C6; color: white; border: none; border-radius: 5px; cursor: pointer;">Create PowerPoint Presentation</button>
+    <div id="status" style="margin: 20px; font-family: monospace; font-size: 14px;"></div>
+
+    <script>
+        async function generatePPT() {
+            const statusDiv = document.getElementById("status");
+            statusDiv.innerHTML = "⏳ Generating PowerPoint... Please wait...";
+            statusDiv.style.color = "blue";
+            
+            try {
+                const PptxGenJS = window.PptxGenJS;
+                const pres = new PptxGenJS();
+                pres.layout = 'LAYOUT_16x9';
+                pres.title = 'FPGA-Accelerated Oracle-Diffusion Scheduling for 6G URLLC';
+
+                // Colors
+                const navy = "0B1F3A";
+                const teal = "0A7EA4";
+                const white = "FFFFFF";
+                const lightGray = "F5F5F5";
+                const darkGray = "333333";
+                const green = "1A7A4A";
+                const red = "B83232";
+
+                // ========================================
+                // SLIDE 1: TITLE SLIDE
+                // ========================================
+                let s1 = pres.addSlide();
+                s1.background = { color: navy };
+                
+                // Title
+                s1.addText("FPGA-Accelerated Oracle-Diffusion", {
+                    x: 0.5, y: 1.5, w: 9, h: 0.8,
+                    fontSize: 36, bold: true, color: white, align: "center"
+                });
+                s1.addText("User Scheduling for 6G URLLC", {
+                    x: 0.5, y: 2.3, w: 9, h: 0.6,
+                    fontSize: 28, bold: true, color: teal, align: "center"
+                });
+                
+                // Subtitle
+                s1.addText("MSc Project Proposal", {
+                    x: 0.5, y: 3.5, w: 9, h: 0.5,
+                    fontSize: 18, color: white, align: "center"
+                });
+                s1.addText("Candidate: [Your Name] | Supervisor: [Supervisor Name] | [Date]", {
+                    x: 0.5, y: 5.0, w: 9, h: 0.4,
+                    fontSize: 12, color: white, align: "center"
+                });
+
+                // ========================================
+                // SLIDE 2: WHAT THIS PROJECT IS
+                // ========================================
+                let s2 = pres.addSlide();
+                s2.background = { color: white };
+                
+                // Header
+                s2.addText("WHAT THIS PROJECT IS", {
+                    x: 0.3, y: 0.2, w: 9.4, h: 0.5,
+                    fontSize: 20, bold: true, color: navy
+                });
+                
+                // What it IS
+                s2.addText("✓ FPGA hardware accelerator on AMD Kria KV260", {
+                    x: 0.5, y: 1.0, w: 9, h: 0.4,
+                    fontSize: 14, color: green
+                });
+                s2.addText("✓ Classical simulation of oracle-diffusion pattern", {
+                    x: 0.5, y: 1.5, w: 9, h: 0.4,
+                    fontSize: 14, color: green
+                });
+                s2.addText("✓ Wall-clock speedup through FPGA parallelism", {
+                    x: 0.5, y: 2.0, w: 9, h: 0.4,
+                    fontSize: 14, color: green
+                });
+                s2.addText("✓ Novel contribution for 6G URLLC scheduling", {
+                    x: 0.5, y: 2.5, w: 9, h: 0.4,
+                    fontSize: 14, color: green
+                });
+                
+                // What it is NOT
+                s2.addText("What it is NOT:", {
+                    x: 0.5, y: 3.2, w: 9, h: 0.4,
+                    fontSize: 16, bold: true, color: red
+                });
+                s2.addText("✗ NOT running on real quantum hardware", {
+                    x: 0.7, y: 3.7, w: 9, h: 0.35,
+                    fontSize: 13, color: red
+                });
+                s2.addText("✗ NOT achieving quantum speedup (O(√N))", {
+                    x: 0.7, y: 4.1, w: 9, h: 0.35,
+                    fontSize: 13, color: red
+                });
+                s2.addText("✗ NOT quantum computing - just classical simulation", {
+                    x: 0.7, y: 4.5, w: 9, h: 0.35,
+                    fontSize: 13, color: red
+                });
+
+                // ========================================
+                // SLIDE 3: PROBLEM STATEMENT
+                // ========================================
+                let s3 = pres.addSlide();
+                s3.background = { color: white };
+                
+                s3.addText("THE PROBLEM: 6G URLLC Scheduling", {
+                    x: 0.3, y: 0.2, w: 9.4, h: 0.5,
+                    fontSize: 20, bold: true, color: navy
+                });
+                
+                s3.addText("A 6G base station must schedule N users across K resource blocks", {
+                    x: 0.5, y: 1.0, w: 9, h: 0.4,
+                    fontSize: 14, color: darkGray
+                });
+                s3.addText("Target latency: < 500 μs (3GPP URLLC requirement)", {
+                    x: 0.5, y: 1.5, w: 9, h: 0.4,
+                    fontSize: 14, color: darkGray
+                });
+                s3.addText("Target reliability: 99.9999% (10⁻⁶ error rate)", {
+                    x: 0.5, y: 2.0, w: 9, h: 0.4,
+                    fontSize: 14, color: darkGray
+                });
+                
+                s3.addText("Why existing methods fail:", {
+                    x: 0.5, y: 2.7, w: 9, h: 0.4,
+                    fontSize: 15, bold: true, color: navy
+                });
+                s3.addText("• Exhaustive search: O(2^N) → impossible for N=32", {
+                    x: 0.7, y: 3.2, w: 9, h: 0.35,
+                    fontSize: 13, color: red
+                });
+                s3.addText("• Greedy algorithm: Fast but 15-30% suboptimal", {
+                    x: 0.7, y: 3.6, w: 9, h: 0.35,
+                    fontSize: 13, color: darkGray
+                });
+                s3.addText("• Qiskit on CPU: Python overhead violates <500 μs", {
+                    x: 0.7, y: 4.0, w: 9, h: 0.35,
+                    fontSize: 13, color: darkGray
+                });
+                s3.addText("• Deep RL: Needs GPU - hard to deploy at edge", {
+                    x: 0.7, y: 4.4, w: 9, h: 0.35,
+                    fontSize: 13, color: darkGray
+                });
+
+                // ========================================
+                // SLIDE 4: PROPOSED SOLUTION
+                // ========================================
+                let s4 = pres.addSlide();
+                s4.background = { color: white };
+                
+                s4.addText("PROPOSED SOLUTION: FPGA Accelerator", {
+                    x: 0.3, y: 0.2, w: 9.4, h: 0.5,
+                    fontSize: 20, bold: true, color: navy
+                });
+                
+                s4.addText("Oracle-Diffusion Pattern (inspired by Grover's algorithm)", {
+                    x: 0.5, y: 0.9, w: 9, h: 0.4,
+                    fontSize: 14, bold: true, color: teal
+                });
+                
+                s4.addText("Three-phase pipeline on Kria KV260:", {
+                    x: 0.5, y: 1.4, w: 9, h: 0.4,
+                    fontSize: 13, color: darkGray
+                });
+                
+                s4.addText("Phase 1 (ARM CPU - Pre-processing)", {
+                    x: 0.7, y: 1.9, w: 9, h: 0.35,
+                    fontSize: 13, bold: true, color: navy
+                });
+                s4.addText("  • Read channel state (SINR per user)", {
+                    x: 0.9, y: 2.25, w: 9, h: 0.3,
+                    fontSize: 12, color: darkGray
+                });
+                s4.addText("  • Compute rates (finite blocklength formula)", {
+                    x: 0.9, y: 2.55, w: 9, h: 0.3,
+                    fontSize: 12, color: darkGray
+                });
+                s4.addText("  • Set oracle threshold via greedy", {
+                    x: 0.9, y: 2.85, w: 9, h: 0.3,
+                    fontSize: 12, color: darkGray
+                });
+                
+                s4.addText("Phase 2 (FPGA PL - Oracle-Diffusion Kernel)", {
+                    x: 0.7, y: 3.3, w: 9, h: 0.35,
+                    fontSize: 13, bold: true, color: navy
+                });
+                s4.addText("  • Initialize uniform amplitudes (BRAM)", {
+                    x: 0.9, y: 3.65, w: 9, h: 0.3,
+                    fontSize: 12, color: darkGray
+                });
+                s4.addText("  • Oracle: flip phase of good schedules", {
+                    x: 0.9, y: 3.95, w: 9, h: 0.3,
+                    fontSize: 12, color: darkGray
+                });
+                s4.addText("  • Diffusion: reflect around mean (2 iterations)", {
+                    x: 0.9, y: 4.25, w: 9, h: 0.3,
+                    fontSize: 12, color: darkGray
+                });
+                s4.addText("  • ArgMax → find best schedule", {
+                    x: 0.9, y: 4.55, w: 9, h: 0.3,
+                    fontSize: 12, color: darkGray
+                });
+                
+                s4.addText("Phase 3 (ARM CPU - Post-processing)", {
+                    x: 0.7, y: 5.0, w: 9, h: 0.35,
+                    fontSize: 12, bold: true, color: navy
+                });
+
+                // ========================================
+                // SLIDE 5: FPGA IMPLEMENTATION DETAILS
+                // ========================================
+                let s5 = pres.addSlide();
+                s5.background = { color: white };
+                
+                s5.addText("FPGA IMPLEMENTATION (Vitis HLS)", {
+                    x: 0.3, y: 0.2, w: 9.4, h: 0.5,
+                    fontSize: 20, bold: true, color: navy
+                });
+                
+                s5.addText("Key optimizations for speed:", {
+                    x: 0.5, y: 0.9, w: 9, h: 0.4,
+                    fontSize: 14, bold: true, color: teal
+                });
+                
+                s5.addText("✓ Pipelining (#pragma HLS PIPELINE)", {
+                    x: 0.7, y: 1.4, w: 9, h: 0.35,
+                    fontSize: 13, color: green
+                });
+                s5.addText("✓ Loop unrolling (factor=16 for parallelism)", {
+                    x: 0.7, y: 1.8, w: 9, h: 0.35,
+                    fontSize: 13, color: green
+                });
+                s5.addText("✓ Parallel reduction tree for sum (8 stages)", {
+                    x: 0.7, y: 2.2, w: 9, h: 0.35,
+                    fontSize: 13, color: green
+                });
+                s5.addText("✓ Fixed-point arithmetic (ap_fixed<16,8>)", {
+                    x: 0.7, y: 2.6, w: 9, h: 0.35,
+                    fontSize: 13, color: green
+                });
+                
+                s5.addText("Target performance (N=16 users):", {
+                    x: 0.5, y: 3.2, w: 9, h: 0.4,
+                    fontSize: 14, bold: true, color: navy
+                });
+                s5.addText("  • Kernel compute: ~8 μs (1536 cycles @ 200 MHz)", {
+                    x: 0.7, y: 3.7, w: 9, h: 0.35,
+                    fontSize: 13, color: darkGray
+                });
+                s5.addText("  • DMA + ARM overhead: 50-200 μs", {
+                    x: 0.7, y: 4.1, w: 9, h: 0.35,
+                    fontSize: 13, color: darkGray
+                });
+                s5.addText("  • End-to-end target: <300 μs", {
+                    x: 0.7, y: 4.5, w: 9, h: 0.35,
+                    fontSize: 13, color: darkGray
+                });
+                s5.addText("  • URLLC budget: 500 μs → ✓ FEASIBLE", {
+                    x: 0.7, y: 4.9, w: 9, h: 0.35,
+                    fontSize: 13, color: green, bold: true
+                });
+
+                // ========================================
+                // SLIDE 6: EXPERIMENT PLAN
+                // ========================================
+                let s6 = pres.addSlide();
+                s6.background = { color: white };
+                
+                s6.addText("EXPERIMENTAL METHODOLOGY", {
+                    x: 0.3, y: 0.2, w: 9.4, h: 0.5,
+                    fontSize: 20, bold: true, color: navy
+                });
+                
+                s6.addText("Experiment 1: Algorithmic Correctness (Qiskit)", {
+                    x: 0.5, y: 0.9, w: 9, h: 0.4,
+                    fontSize: 14, bold: true, color: teal
+                });
+                s6.addText("  • N = 4, 6, 8 users | 1000 random channel realizations", {
+                    x: 0.7, y: 1.3, w: 9, h: 0.35,
+                    fontSize: 12, color: darkGray
+                });
+                s6.addText("  • Compare Grover vs exhaustive search (N≤10)", {
+                    x: 0.7, y: 1.65, w: 9, h: 0.35,
+                    fontSize: 12, color: darkGray
+                });
+                s6.addText("  • Metrics: Utility ratio, constraint satisfaction", {
+                    x: 0.7, y: 2.0, w: 9, h: 0.35,
+                    fontSize: 12, color: darkGray
+                });
+                
+                s6.addText("Experiment 2: FPGA Latency Profiling", {
+                    x: 0.5, y: 2.6, w: 9, h: 0.4,
+                    fontSize: 14, bold: true, color: teal
+                });
+                s6.addText("  • N = 8, 12, 16 | 100 timed runs each", {
+                    x: 0.7, y: 3.0, w: 9, h: 0.35,
+                    fontSize: 12, color: darkGray
+                });
+                s6.addText("  • Instrument DMA, kernel, and ArgMax phases", {
+                    x: 0.7, y: 3.35, w: 9, h: 0.35,
+                    fontSize: 12, color: darkGray
+                });
+                s6.addText("  • Report mean, std, min, max latency with box plots", {
+                    x: 0.7, y: 3.7, w: 9, h: 0.35,
+                    fontSize: 12, color: darkGray
+                });
+                
+                s6.addText("Experiment 3: Scheduling Quality", {
+                    x: 0.5, y: 4.3, w: 9, h: 0.4,
+                    fontSize: 14, bold: true, color: teal
+                });
+                s6.addText("  • T = 1000 TTIs, Jakes' channel model (fd=10 Hz)", {
+                    x: 0.7, y: 4.7, w: 9, h: 0.35,
+                    fontSize: 12, color: darkGray
+                });
+                s6.addText("  • Metrics: Jain Fairness Index, throughput, outage %", {
+                    x: 0.7, y: 5.05, w: 9, h: 0.35,
+                    fontSize: 12, color: darkGray
+                });
+
+                // ========================================
+                // SLIDE 7: HARDWARE PLATFORM
+                // ========================================
+                let s7 = pres.addSlide();
+                s7.background = { color: white };
+                
+                s7.addText("HARDWARE PLATFORM: AMD Kria KV260", {
+                    x: 0.3, y: 0.2, w: 9.4, h: 0.5,
+                    fontSize: 20, bold: true, color: navy
+                });
+                
+                s7.addText("Key specifications:", {
+                    x: 0.5, y: 0.9, w: 9, h: 0.4,
+                    fontSize: 14, bold: true, color: teal
+                });
+                
+                const specs = [
+                    "FPGA: Zynq UltraScale+ MPSoC",
+                    "LUTs: 144K look-up tables",
+                    "DSPs: 360 DSP slices",
+                    "BRAM: 5.1 MB (fits N ≤ 16)",
+                    "ARM CPU: 4× Cortex-A53 @ 1.2 GHz",
+                    "DDR4: 4 GB system RAM",
+                    "Software: PYNQ (Python on ARM)",
+                    "Price: ~$500 USD"
+                ];
+                
+                specs.forEach((spec, i) => {
+                    s7.addText("• " + spec, {
+                        x: 0.7, y: 1.4 + (i * 0.45), w: 9, h: 0.4,
+                        fontSize: 12, color: darkGray
+                    });
+                });
+
+                // ========================================
+                // SLIDE 8: TIMELINE
+                // ========================================
+                let s8 = pres.addSlide();
+                s8.background = { color: white };
+                
+                s8.addText("12-WEEK PROJECT TIMELINE", {
+                    x: 0.3, y: 0.2, w: 9.4, h: 0.5,
+                    fontSize: 20, bold: true, color: navy
+                });
+                
+                const timeline = [
+                    "Weeks 1-2: Foundation - Literature review, Qiskit setup, baseline implementation",
+                    "Weeks 3-4: Qiskit Grover - Algorithm validation, utility function, oracle definition",
+                    "Weeks 5-6: FPGA Setup - Vitis HLS, Vivado, KV260 + PYNQ environment",
+                    "Weeks 7-8: HLS Kernel - Oracle, diffusion, pipelining, unrolling",
+                    "Weeks 9-10: Integration & Test - AXI-DMA, latency instrumentation, E2E testing",
+                    "Weeks 11-12: Analysis & Thesis - Statistical analysis, writing, presentation"
+                ];
+                
+                timeline.forEach((item, i) => {
+                    s8.addText("• " + item, {
+                        x: 0.5, y: 0.9 + (i * 0.7), w: 9, h: 0.6,
+                        fontSize: 11, color: darkGray
+                    });
+                });
+
+                // ========================================
+                // SLIDE 9: SUCCESS METRICS
+                // ========================================
+                let s9 = pres.addSlide();
+                s9.background = { color: white };
+                
+                s9.addText("SUCCESS METRICS", {
+                    x: 0.3, y: 0.2, w: 9.4, h: 0.5,
+                    fontSize: 20, bold: true, color: navy
+                });
+                
+                const metrics = [
+                    "• End-to-end latency (N=16) < 500 μs",
+                    "• Optimality gap vs greedy < 5%",
+                    "• Jain Fairness Index ≥ 0.85",
+                    "• FPGA resource utilisation < 80% LUTs",
+                    "• Success probability (m=2 iterations) ≥ 90%",
+                    "• Reproducible open-source implementation (GitHub)"
+                ];
+                
+                metrics.forEach((metric, i) => {
+                    s9.addText(metric, {
+                        x: 0.5, y: 0.9 + (i * 0.6), w: 9, h: 0.5,
+                        fontSize: 14, color: green
+                    });
+                });
+
+                // ========================================
+                // SLIDE 10: CONCLUSION
+                // ========================================
+                let s10 = pres.addSlide();
+                s10.background = { color: navy };
+                
+                s10.addText("CONCLUSION", {
+                    x: 0.5, y: 1.0, w: 9, h: 0.6,
+                    fontSize: 32, bold: true, color: white, align: "center"
+                });
+                
+                s10.addText("First FPGA latency characterisation for oracle-diffusion", {
+                    x: 0.5, y: 2.0, w: 9, h: 0.5,
+                    fontSize: 16, color: teal, align: "center"
+                });
+                s10.addText("scheduling in a 6G URLLC context", {
+                    x: 0.5, y: 2.5, w: 9, h: 0.5,
+                    fontSize: 16, color: teal, align: "center"
+                });
+                
+                s10.addText("✓ Clear problem definition\n✓ Feasible, honest scope\n✓ Rigorous methodology\n✓ Novel contribution", {
+                    x: 2.0, y: 3.3, w: 6, h: 1.5,
+                    fontSize: 14, color: white, align: "left"
+                });
+                
+                s10.addText("Thank you", {
+                    x: 0.5, y: 5.2, w: 9, h: 0.4,
+                    fontSize: 14, color: white, align: "center"
+                });
+
+                // Save the file
+                await pres.writeFile({ fileName: "FPGA_6G_Scheduling_Presentation.pptx" });
+                statusDiv.innerHTML = "✅ SUCCESS! PowerPoint file downloaded. Check your Downloads folder for 'FPGA_6G_Scheduling_Presentation.pptx'";
+                statusDiv.style.color = "green";
+                
+            } catch(error) {
+                statusDiv.innerHTML = "❌ Error: " + error.message;
+                statusDiv.style.color = "red";
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
